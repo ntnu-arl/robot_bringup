@@ -33,7 +33,7 @@
     </include>
 
     <!-- spawn robot -->
-    <node pkg="ros_gz_sim" exec="create" name="spawn_model" args="
+    <node pkg="ros_gz_sim" exec="create" name="spawn_model" launch-prefix="bash -c 'sleep 3; $0 $@'" args="
         -world map
         -name $(var robot_name)
         -file robots/$(var robot_type)/model.sdf

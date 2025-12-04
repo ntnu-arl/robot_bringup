@@ -3,7 +3,7 @@
   <arg name="rviz_en" default="false" />
   <param name="use_sim_time" value="true"/>
   <arg name="robot_name" default="rmf" />
-  <arg name="config_name" default="rmf" />
+  <arg name="config_name" default="uav_nmpc_sim" />
 
   <node pkg="tf" type="static_transform_publisher" name="tf_world_map" args="0 0 0 0 0 0 map world 10" />
 
@@ -15,16 +15,16 @@
 
   <arg name="map_config_file" default="$(arg voxblox_config_file)" />
 
-  <arg name="odometry_topic" default="/$(robot_name)/odom" />
+  <arg name="odometry_topic" default="/$(arg robot_name)/odom" />
 
   <!-- Graph based planning -->
 
   <node pkg="gbplanner" type="gbplanner_node" name="gbplanner_node" output="screen">
 		<remap from="odometry" to="$(arg odometry_topic)" />
-		<remap from="/pointcloud" to="/$(robot_name)/lidar/points_downsampled" />
+		<remap from="/pointcloud" to="/$(arg robot_name)/lidar/points_downsampled" />
 		<rosparam command="load" file="$(arg gbplanner_config_file)" />
 		<rosparam command="load" file="$(arg map_config_file)" />
-    <remap from="transform" to="/$(robot_name)/base_link/lidar" />
+    <remap from="transform" to="/$(arg robot_name)/base_link/lidar" />
 		<remap from="manhole_detections" to="stable_detections" />
 		<param name="behavior_tree_path" value="$(find robot_bringup)/config/ros1/bt_xml/main_tree.xml"/>
 	</node>
@@ -37,7 +37,7 @@
 		<rosparam command="load" file="$(arg pci_file)" />
 	</node>
 
-  <node pkg="rviz" type="rviz" name="gbplanner_ui" output="screen" args="-d $(find robot_bringup)/rviz/ros1/$(robot_name).rviz"/>
+  <node pkg="rviz" type="rviz" name="gbplanner_ui" output="screen" args="-d $(find robot_bringup)/rviz/ros1/$(arg robot_name).rviz"/>
 
   <!-- <node pkg="manhole_detector" type="manhole_detector_node" name="manhole_detector_node" output="screen">
       <remap from="pcl_in" to="/rslidar_points" />

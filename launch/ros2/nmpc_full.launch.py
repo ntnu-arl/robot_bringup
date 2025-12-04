@@ -15,15 +15,34 @@ def generate_launch_description():
     declare_args = [
         DeclareLaunchArgument('use_sim_time', default_value='true'),
         DeclareLaunchArgument('ns', default_value='sdf_nmpc', description='Common namespace for nmpc nodes'),
+        DeclareLaunchArgument(
+            'input_image', 
+            default_value='/rmf/lidar/range',
+            description='Topic to remap to observation'
+        ),
+        DeclareLaunchArgument(
+            'odometry', 
+            default_value='/rmf/odom',
+            description='Odometry topic'
+        ),
+        DeclareLaunchArgument(
+            'cfg', 
+            default_value='nmpc_sim_lidar.yaml',
+            description='Config file'
+        ),
         # DeclareLaunchArgument('cfg', default_value='sim_camera.yaml', description='Config preset <cfg>.yaml'),
         # # DeclareLaunchArgument('build', default_value='false', description='Run pre-build step before starting nodes'),
     ]
+
+    odometry = LaunchConfiguration('odometry')
+    input_image = LaunchConfiguration('input_image')
+    cfg = LaunchConfiguration('cfg')
 
     cfg_file = PathJoinSubstitution([
         get_package_share_directory('robot_bringup'),
         'config',
         'ros2',
-        'sim_lidar.yaml'
+        cfg
     ])
 
     node_vae = Node(
@@ -102,9 +121,10 @@ def generate_launch_description():
 
     group = GroupAction([
         PushRosNamespace(ns),  # this namespace is expected by rviz_nmpc_plugin
-        SetRemap(src='odometry', dst='/rmf/odom'),
+        SetRemap(src='odometry', dst=odometry),
         # SetRemap(src='observation', dst='/rmf/cam/depth'),
-        SetRemap(src='observation', dst='/rmf/lidar/range'),
+        # SetRemap(src='observation', dst='/rmf/lidar/range'),
+        SetRemap(src='observation', dst=input_image),
         # SetRemap(src='cmd/acc', dst='/rmf/cmd/acc'),
         SetRemap(src='cmd/acc', dst='/sdf_nmpc/cmd/acc'),
         SetRemap(src='wps', dst='/gbplanner_path'),
@@ -112,7 +132,7 @@ def generate_launch_description():
         node_ref_gen,
         node_sdfnmpc,
         # node_rviz,
-        # node_viz_vae,
+        node_viz_vae,
         # node_viz_sdf_2D,
     ])
     

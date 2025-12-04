@@ -32,7 +32,7 @@
     </include>
 
     <!-- spawn robot -->
-    <node pkg="ros_gz_sim" exec="create" name="spawn_model" args="
+    <node pkg="ros_gz_sim" exec="create" name="spawn_model" launch-prefix="bash -c 'sleep 5; $0 $@'" args="
         -world map
         -name $(var robot_name)
         -file robots/$(var robot_type)/model.sdf
@@ -66,6 +66,7 @@
 
     <!-- tf -->
     <node pkg="tf2_ros" exec="static_transform_publisher" name="tf_map_odom" args="0 0 0 0 0 0 1 /map /$(var robot_name)/odom"/>
+    <node pkg="tf2_ros" exec="static_transform_publisher" name="tf_base_base_inv" args="0 0 0 3.14 0 0 /$(var robot_name)/base_link /$(var robot_name)/base_link_inv"/>
     <node pkg="tf2_ros" exec="static_transform_publisher" name="tf_depth_cam_optical" args="0 0 0 0.5 -0.5 0.5 -0.5 rmf_unipilot/base_link/depth_cam rmf_unipilot/base_link/depth_cam/optical"/>
 
     <!-- rviz -->

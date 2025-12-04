@@ -5,11 +5,11 @@ planner_trigger_lead_time: 0.01
 smooth_heading_enable: false
 smooth_homing_enable: false
 # For flight:
-path_end_dist_thr: 2.7 # 0.5
+path_end_dist_thr: 1.8 # 0.5
 path_end_yaw_thr: 10.2
 path_end_dist_scale: 1.0 #0.75
-path_progression_dist_thr: 8.0 # 0.9
-path_progression_dist_thr_min: 8.0 # 0.6
+path_progression_dist_thr: 2.8 # 0.9
+path_progression_dist_thr_min: 2.8 # 0.6
 path_progression_yaw_thr: 10.4
 path_progression_yaw_thr_min: 10.4
 path_progression_pitch_thr: 3.14
@@ -17,8 +17,8 @@ z_offset_a: 0.0
 z_offset_b: 0.0
 z_off_t_start: 0
 max_mission_time: 0
-pub_singple_wp: true
-interpolate_traj: false
+pub_singple_wp: false
+interpolate_traj: true
 # ---------------------------
 # ONLY FOR HANDHELD:
 # path_end_dist_thr: 0.9

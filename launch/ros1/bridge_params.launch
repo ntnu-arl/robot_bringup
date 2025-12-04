@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_file" default="rmf"/>
+  <rosparam file="$(find robot_bringup)/config/ros1/bridge_params/bridge_$(arg config_file).yaml" command="load"/>
+</launch>

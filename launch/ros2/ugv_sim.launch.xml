@@ -55,6 +55,7 @@
     <node pkg="ugv_gz" exec="path_tracker.py" name="path_tracker" output="screen">
         <remap from="path" to="/gbplanner_path"/>
         <remap from="cmd_vel" to="/$(var robot_name)/cmd/vel"/>
+        <remap from="odometry" to="/$(var robot_name)/odom"/>
     </node>
 
     <!-- topics -->

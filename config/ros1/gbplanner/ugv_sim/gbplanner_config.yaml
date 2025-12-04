@@ -6,7 +6,7 @@
 RobotParams:
   type:               kGroundRobot
   # size:               [0.4, 0.0, 0.0] # Actual size of the robot in meters [x, y, z]
-  size:               [0.6, 0.6, 0.4] # Actual size of the robot in meters [x, y, z]
+  size:               [0.4, 0.4, 0.4] # Actual size of the robot in meters [x, y, z]
   size_extension_min: [0.0, 0.0, 0.0] # minimum extension outside of robot size allowed to operate
   size_extension:     [0.2, 0.2, 0.0] # maximum extension outside of the robot size
   center_offset:      [-0.0, 0.0, 0.0]

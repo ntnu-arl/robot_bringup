@@ -1,0 +1,53 @@
+topics:
+  # ros1 to ros2
+  - topic: /msf_core/odometry
+    type: nav_msgs/msg/Odometry
+    queue_size: 10
+    direction: ros1_to_ros2
+  
+  - topic: /mimosa_node/lidar/manager/points_full_res
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros1_to_ros2
+
+  - topic: /tf 
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+    direction: ros1_to_ros2
+  
+  - topic: /tf_static
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+    direction: ros1_to_ros2
+
+  - topic: /cam_front/image_raw/compressed
+    type: sensor_msgs/msg/CompressedImage
+    queue_size: 10
+    direction: ros1_to_ros2
+  
+  - topic: /clock
+    type: rosgraph_msgs/msg/Clock
+    queue_size: 10
+    direction: ros1_to_ros2
+
+    # ros2 to ros1
+
+  - topic: /detection_vlm/detections_image
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /detection_vlm/reasoning_image
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /detection_vlm/visualization_3d_bboxes
+    type: visualization_msgs/msg/MarkerArray
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /detection_vlm/accumulated_pointcloud
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros2_to_ros1  

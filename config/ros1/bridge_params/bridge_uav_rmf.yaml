@@ -40,6 +40,7 @@ topics:
   - topic: /clock
     type: rosgraph_msgs/msg/Clock
     queue_size: 10
+    direction: ros2_to_ros1
   
   - topic: /mavros/setpoint_raw/local
     type: mavros_msgs/msg/PositionTarget

@@ -10,7 +10,7 @@
       <ReactiveFallback>
         <HomingCheck/>
         <Sequence>
-          <SubTree ID="lnav"/>
+          <SubTree ID="lge_homing"/>
           <AlwaysFailure/>
         </Sequence>
       </ReactiveFallback>

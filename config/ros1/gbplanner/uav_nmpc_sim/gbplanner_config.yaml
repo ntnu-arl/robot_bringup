@@ -225,7 +225,7 @@ PlanningParams:
   clustering_radius: 0.5
   path_interpolation_distance: -0.5 # -1.0
 
-  planning_backward: true
+  planning_backward: false
 
   use_gvi: false
   

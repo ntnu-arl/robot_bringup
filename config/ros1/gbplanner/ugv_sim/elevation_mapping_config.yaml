@@ -1,0 +1,35 @@
+input_sources:
+  laser: # A name to identify the input source
+    type: pointcloud # Supported types: pointcloud
+    topic: /velodyne_points_filtered
+    queue_size: 1
+    publish_on_update: true # Whether to publish the elevation map after a callback from this source.
+    sensor_processor:
+      type: perfect
+map_frame_id: "world"
+robot_base_frame_id: "smb_arl/base_link"
+robot_pose_with_covariance_topic: "" # Leaving this empty skipps pose covariance updates.
+robot_pose_cache_size: 200
+track_point_frame_id: "smb_arl/base_link"
+track_point_x: 0.0
+track_point_y: 0.0
+track_point_z: 0.0
+
+length_in_x: 40.0
+length_in_y: 40.0
+position_x: 0.0
+position_y: 0.0
+resolution: 0.2
+# min_variance: 0.0001
+# max_variance: 10000.0
+min_variance: 0.0001
+max_variance: 0.05
+mahalanobis_distance_threshold: 2.5
+multi_height_noise: 0.01
+surface_normal_positive_axis:               z
+# fused_map_publishing_rate:                  0.5
+enable_visibility_cleanup:                  false
+visibility_cleanup_rate:                    1.0
+scanning_duration:                          1.0
+
+target_frame_init_submap:                   world

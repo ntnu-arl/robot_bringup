@@ -276,6 +276,9 @@ PlanningParams:
 
   add_only_frontiers_to_global_graph: true
 
+  local_navigation_reaching_radius: 3.0
+  active_homing_update_radius: 7.0
+
   min_coverage_percentage: 0.9
   inspection_xy_spacing: 1.0 # 1.5
   inspection_z_spacing: 0.5 # 2.0

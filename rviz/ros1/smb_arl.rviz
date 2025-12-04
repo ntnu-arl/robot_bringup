@@ -375,8 +375,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.7683048248291016
-            Min Value: 0.04285508394241333
+            Max Value: 1.3219009637832642
+            Min Value: 0.04111123085021973
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -392,10 +392,10 @@ Visualization Manager:
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
-          Size (Pixels): 1
+          Size (Pixels): 3
           Size (m): 0.009999999776482582
           Style: Points
-          Topic: /smb_arl/lidar/points_downsampled
+          Topic: /velodyne_points_filtered
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -450,7 +450,7 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.9000000953674316
+            Max Value: 2.1000001430511475
             Min Value: 0.10000000149011612
             Value: true
           Axis: Z
@@ -675,6 +675,30 @@ Visualization Manager:
           Value: true
       Enabled: false
       Name: ManholeDetection
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Class: grid_map_rviz_plugin/GridMap
+      Color: 200; 200; 200
+      Color Layer: elevation
+      Color Transformer: GridMapLayer
+      ColorMap: default
+      Enabled: true
+      Grid Cell Decimation: 1
+      Grid Line Thickness: 0.10000000149011612
+      Height Layer: elevation
+      Height Transformer: GridMapLayer
+      History Length: 1
+      Invert ColorMap: false
+      Max Color: 255; 255; 255
+      Max Intensity: 10
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: GridMap
+      Show Grid Lines: true
+      Topic: /elevation_mapping_lidar/elevation_map
+      Unreliable: false
+      Use ColorMap: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -703,7 +727,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 11.648003578186035
+      Distance: 13.32873821258545
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -719,9 +743,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1053982973098755
+      Pitch: 0.9403982758522034
       Target Frame: smb_arl
-      Yaw: 3.2703957557678223
+      Yaw: 3.270392894744873
     Saved: ~
 Window Geometry:
   Displays:

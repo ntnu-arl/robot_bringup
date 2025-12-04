@@ -5,7 +5,7 @@ planner_trigger_lead_time: 0.01
 smooth_heading_enable: false
 smooth_homing_enable: false
 # For flight:
-path_end_dist_thr: 1.0 # 0.5
+path_end_dist_thr: 2.0 # 0.5
 path_end_yaw_thr: 10.2
 path_end_dist_scale: 1.0 #0.75
 path_progression_dist_thr: 2.8 # 0.9

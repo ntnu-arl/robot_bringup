@@ -15,7 +15,7 @@ class PointCloudDownsampler(Node):
         self.declare_parameter('input_topic', '/rmf/lidar/points')
         self.declare_parameter('output_topic', '/rmf/lidar/points_downsampled')
         self.declare_parameter('voxel_size', 0.1)  # 5cm voxel grid
-        self.declare_parameter('skip_points', 10)     # Keep every Nth point (alternative method)
+        self.declare_parameter('skip_points', 5)     # Keep every Nth point (alternative method)
         self.declare_parameter('method', 'skip')    # 'voxel' or 'skip'
         
         input_topic = self.get_parameter('input_topic').value

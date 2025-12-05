@@ -13,7 +13,7 @@ class ZFilterNode:
         self.pub = rospy.Publisher('/velodyne_points_filtered', PointCloud2, queue_size=1)
         self.rad_filter_pub = rospy.Publisher('/velodyne_points_rad_filtered', PointCloud2, queue_size=1)
         # rospy.Subscriber('/lidar/point_cloud', PointCloud2, self.callback)
-        rospy.Subscriber('/smb_arl/lidar/points_downsampled', PointCloud2, self.callback)
+        rospy.Subscriber('/smb_arl/lidar/points', PointCloud2, self.callback)
         # rospy.Subscriber('/input_pointcloud', PointCloud2, self.callback)
         # rospy.Subscriber('/velodyne_points', PointCloud2, self.callback)
 

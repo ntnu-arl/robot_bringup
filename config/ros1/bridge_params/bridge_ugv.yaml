@@ -27,10 +27,10 @@ topics:
     queue_size: 10
     direction: ros2_to_ros1
   
-  # - topic: /smb_arl/lidar/points
-  #   type: sensor_msgs/msg/PointCloud2
-  #   queue_size: 10
-  #   direction: ros2_to_ros1
+  - topic: /smb_arl/lidar/points
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros2_to_ros1
   
   - topic: /tf
     type: tf2_msgs/msg/TFMessage

@@ -31,7 +31,7 @@ trajectory_lead_time: 0.0 # 1.0 # 3.0
 init_motion:
   z_takeoff: 0.0
   z_drop: 0.0
-  x_forward: 2.75
+  x_forward: 3.75
 
 # Group related parameters to be shared between nodes.
 RobotDynamics:

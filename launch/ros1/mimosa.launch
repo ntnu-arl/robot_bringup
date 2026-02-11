@@ -9,7 +9,7 @@
     <rosparam file="$(find robot_bringup)/config/ros1/os_dummy.json" command="load" ns="lidar/sensor"/>
     <remap from="/mimosa_node/radar/manager/radar_in" to="/radar/cloud" />
 
-    <rosparam file="$(find robot_bringup)/config/ros1/mimosa.yaml"/>
+    <rosparam file="$(find robot_bringup)/config/ros1/perception/mimosa.yaml"/>
   </node>
 
   <arg name="viz" default="false" />

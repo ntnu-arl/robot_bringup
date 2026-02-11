@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- RL Point Cloud Selector Node -->
+  <node pkg="rl_pc_selector" type="binning_node" name="pointcloud_processor" output="screen">
+    <!-- Load parameters from config file -->
+    <rosparam command="load" file="$(find robot_bringup)/config/ros1/control/rl_pc_selector.config" />
+  </node>
+</launch>

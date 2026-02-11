@@ -20,10 +20,15 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
   
-  # - topic: /rslidar_points
-  #   type: sensor_msgs/msg/PointCloud2
-  #   queue_size: 10
-  #   direction: ros1_to_ros2
+  - topic: /cbf_pc_selector/output_pc
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros1_to_ros2
+  
+  - topic: /processed_lidar
+    type: std_msgs/msg/Float32MultiArray
+    queue_size: 10
+    direction: ros1_to_ros2
 
   - service: /sdf_nmpc/takeoff
     type: std_srvs/srv/Trigger
@@ -35,6 +40,17 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
 
+  - topic: /cmd_joy
+    type: geometry_msgs/msg/Twist
+    queue_size: 10
+    direction: ros1_to_ros2
+
+  
+  # - topic: /mavros/state
+  #   type: mavros_msgs/msg/State
+  #   queue_size: 10
+  #   direction: ros1_to_ros2
+
     # ros2 to ros1
 
   - topic: /mavros/setpoint_raw/local
@@ -42,10 +58,20 @@ topics:
     queue_size: 10
     direction: ros2_to_ros1
   
+  # - topic: /sdf_nmpc/cmd_acc
+  #   type: geometry_msgs/msg/Twist
+  #   queue_size: 10
+  #   direction: ros2_to_ros1
+  
   - topic: /sdf_nmpc/horizon_ref
     type: trajectory_msgs/msg/MultiDOFJointTrajectory
     queue_size: 10
     direction: ros2_to_ros1
+  
+  # - topic: /mavros/setpoint_accel/accel
+  #   type: geometry_msgs/msg/Vector3Stamped
+  #   queue_size: 10
+  #   direction: ros2_to_ros1
   
   - topic: /cam_left/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
@@ -67,6 +93,26 @@ topics:
     queue_size: 10
     direction: ros2_to_ros1
 
+  - topic: /pmd_royale_ros_camera_node/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /pmd_royale_ros_camera_node/depth_image_0
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /pmd_royale_ros_camera_node/gray_image_0
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /pmd_royale_ros_camera_node/point_cloud_0
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros2_to_ros1
+
   - topic: /rl_node/cmd_vel
     type: geometry_msgs/msg/Twist
     queue_size: 10
@@ -79,5 +125,15 @@ topics:
 
   - topic: /sdf_nmpc/viz/horizon_traj
     type: nav_msgs/msg/Path
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /composite_cbf/input_viz
+    type: geometry_msgs/msg/TwistStamped
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /composite_cbf/output_viz
+    type: geometry_msgs/msg/TwistStamped
     queue_size: 10
     direction: ros2_to_ros1

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Arguments -->
+  <!-- <arg name="input_topic" default="/mimosa_node/lidar/manager/points_full_res" /> -->
+  <arg name="input_topic" default="/rslidar_points" />
+  <arg name="frame_id" default="mimosa_lidar" />
+  <arg name="slice_thickness" default="90.0" />
+  <arg name="center_elevation" default="0.0" />
+  <arg name="fill_value" default="1.5" />
+  <arg name="output" default="screen" />
+  
+  <!-- Dome Lidar Processor Node -->
+  <node pkg="dome_lidar_processor" 
+        type="dome_lidar_processor_node" 
+        name="dome_lidar_processor" 
+        output="$(arg output)">
+    
+    <!-- Input/Output Configuration -->
+    <param name="input_topic" value="$(arg input_topic)" />
+    <param name="frame_id" value="$(arg frame_id)" />
+    
+    <!-- Slice Parameters -->
+    <param name="slice_thickness" value="$(arg slice_thickness)" />
+    <param name="center_elevation" value="$(arg center_elevation)" />
+    <param name="stretch_to_full" value="false" />
+    <param name="max_range" value="15.0" />
+    <param name="use_intermediate_upsampling" value="true" />
+    
+    <!-- Image Parameters -->
+    <param name="fill_value" value="$(arg fill_value)" />
+
+    <remap from="/dome_lidar_processor/range_512x128" to="/img_node/range_image" />
+    
+    <!-- Output topics (relative to node namespace):
+         - ~slice_pointcloud (sensor_msgs/PointCloud2)
+         - ~range_64x32 (sensor_msgs/Image)
+         - ~range_256x128 (sensor_msgs/Image)
+         - ~range_512x128 (sensor_msgs/Image)
+    -->
+  </node>
+  
+</launch>

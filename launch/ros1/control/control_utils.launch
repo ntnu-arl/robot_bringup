@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="cbf_pc_selector" default="true"/>
+  <arg name="rl_pc_selector" default="true"/>
+  <arg name="nmpc_img_generator" default="true"/>
+
+  <include file="$(find robot_bringup)/launch/ros1/control/cbf_pc_selector.launch" if="$(arg cbf_pc_selector)"/>
+
+  <include file="$(find robot_bringup)/launch/ros1/control/dome_lidar_slicer.launch" if="$(arg nmpc_img_generator)"/>  
+
+  <include file="$(find robot_bringup)/launch/ros1/control/rl_pc_selector.launch" if="$(arg rl_pc_selector)"/>
+
+  <node pkg="control_launcher" type="ps_to_path.py" name="ps_to_path" output="screen"/>
+</launch>

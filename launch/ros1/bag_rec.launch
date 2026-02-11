@@ -162,6 +162,11 @@
       /sdf_nmpc/horizon_ref
       /sdf_nmpc/viz/horizon_ref
       /sdf_nmpc/viz/horizon_traj
+
+      /composite_cbf/input_viz
+      /composite_cbf/output_viz
+
+      /cbf_pc_selector/output_pc
     " />
 
 </launch>

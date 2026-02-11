@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="cbf_pc_selector" type="cbf_pc_selector_node" name="cbf_pc_selector" output="screen">
+        <param name="config_file" value="$(find robot_bringup)/config/ros1/control/cbf_pc_selector.yaml"/>
+    </node>
+</launch>

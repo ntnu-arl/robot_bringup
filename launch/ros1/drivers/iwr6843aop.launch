@@ -2,8 +2,8 @@
   <!-- Input arguments launch-prefix="bash -c 'sleep 1.0; $0 $@' " -->
   <arg name="max_allowed_elevation_angle_deg" default="90" doc="Maximum allowed elevation angle in degrees for detected object data [0 > value >= 90]}"/>
   <arg name="max_allowed_azimuth_angle_deg" default="90" doc="Maximum allowed azimuth angle in degrees for detected object data [0 > value >= 90]}"/>
-  <arg name="config_dir" default="$(find robot_bringup)/config/ros1" doc="Path to the config directory"/>
-  <arg name="config_file" default="radar_4mps.cfg"/>
+  <arg name="config_dir" default="$(find robot_bringup)/config/ros1/sensors" doc="Path to the config directory"/>
+  <arg name="config_file" default="radar.cfg"/>
 
   <arg name="namespace" default="radar" />
   <arg name="command_port" default="/dev/ttyUSB0" />

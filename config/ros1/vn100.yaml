@@ -5,10 +5,10 @@
 sensor_family: 1
 
 # Port on which the VN-100 is connected
-port: /dev/ttyTHS1
+port: /dev/ttyTHS2
 
 # This should be a value from the set [9600, 19200, 38400, 57600, 115200, 128000, 230400, 460800, 921600] chosen such that it is able to support the required data streaming rate
-baud_rate: 115200
+baud_rate: 230400
 
 # The VN-100 has two ports that it can stream data from. This param controls which of the ports is to be used. Possible values are:
 # 0 - None

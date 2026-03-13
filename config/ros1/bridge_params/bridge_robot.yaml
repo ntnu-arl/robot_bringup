@@ -52,13 +52,28 @@ topics:
     queue_size: 10
     direction: ros2_to_ros1
 
+  - topic: /cam_left/image_raw/compressed_exposure_time
+    type: sensor_msgs/msg/TimeReference
+    queue_size: 10
+    direction: ros2_to_ros1
+
   - topic: /cam_front/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
     queue_size: 10
     direction: ros2_to_ros1
 
+  - topic: /cam_front/image_raw/compressed_exposure_time
+    type: sensor_msgs/msg/TimeReference
+    queue_size: 10
+    direction: ros2_to_ros1
+
   - topic: /cam_right/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /cam_right/image_raw/compressed_exposure_time
+    type: sensor_msgs/msg/TimeReference
     queue_size: 10
     direction: ros2_to_ros1
 

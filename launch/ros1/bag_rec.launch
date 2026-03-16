@@ -24,11 +24,8 @@
       /vectornav_driver_node/sync_out_stamp
 
       /cam_front/image_raw/compressed
-      /cam_front/synchronized/image_raw/compressed
       /cam_left/image_raw/compressed
-      /cam_left/synchronized/image_raw/compressed
       /cam_right/image_raw/compressed
-      /cam_right/synchronized/image_raw/compressed
 
       /royale_cam_royale_camera/camera_info
       /royale_cam_royale_camera/depth_image_0

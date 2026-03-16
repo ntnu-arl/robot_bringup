@@ -1,5 +1,10 @@
 topics:
   # ros1 to ros2
+  - topic: /vectornav_driver_node/sync_out_stamp
+    type: std_msgs/msg/Header
+    queue_size: 10
+    direction: ros1_to_ros2
+
   - topic: /msf_core/odometry
     type: nav_msgs/msg/Odometry
     queue_size: 10

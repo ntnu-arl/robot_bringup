@@ -4,6 +4,11 @@ topics:
     type: nav_msgs/msg/Path
     queue_size: 10
     direction: ros1_to_ros2
+  
+  - topic: /sdf_nmpc/cmd/acc
+    type: geometry_msgs/msg/Twist
+    queue_size: 10
+    direction: ros1_to_ros2
 
   - service: /sdf_nmpc/takeoff
     type: std_srvs/srv/Trigger
@@ -23,6 +28,11 @@ topics:
     direction: ros2_to_ros1
   
   - topic: /rmf/lidar/points_downsampled
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /cbf_pc_selector/output_pc
     type: sensor_msgs/msg/PointCloud2
     queue_size: 10
     direction: ros2_to_ros1
@@ -64,5 +74,15 @@ topics:
 
   - topic: /sdf_nmpc/viz/horizon_traj
     type: nav_msgs/msg/Path
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /composite_cbf/input_viz
+    type: geometry_msgs/msg/TwistStamped
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /composite_cbf/output_viz
+    type: geometry_msgs/msg/TwistStamped
     queue_size: 10
     direction: ros2_to_ros1

@@ -26,6 +26,11 @@ def generate_launch_description():
             description='Odometry topic'
         ),
         DeclareLaunchArgument(
+            'output_topic', 
+            default_value='/rmf/cmd/acc',
+            description='Output acc topic'
+        ),
+        DeclareLaunchArgument(
             'cfg', 
             default_value='nmpc_sim_lidar.yaml',
             description='Config file'
@@ -35,6 +40,7 @@ def generate_launch_description():
     ]
 
     odometry = LaunchConfiguration('odometry')
+    output_topic = LaunchConfiguration('output_topic')
     input_image = LaunchConfiguration('input_image')
     cfg = LaunchConfiguration('cfg')
 
@@ -126,7 +132,7 @@ def generate_launch_description():
         # SetRemap(src='observation', dst='/rmf/lidar/range'),
         SetRemap(src='observation', dst=input_image),
         # SetRemap(src='cmd/acc', dst='/rmf/cmd/acc'),
-        SetRemap(src='cmd/acc', dst='/sdf_nmpc/cmd/acc'),
+        SetRemap(src='cmd/acc', dst=output_topic),
         SetRemap(src='wps', dst='/gbplanner_path'),
         node_vae,
         node_ref_gen,

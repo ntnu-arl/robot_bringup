@@ -1,14 +1,14 @@
-name: sim_lidar  # defines name of generated code
+name: sim_unipilot  # defines name of generated code
 
 ## mission parameters
 ref:
-    yaw_mode: align  # allowed modes: ref, align, current, zero
+    yaw_mode: ref  # allowed modes: ref, align, current, zero
     align_yaw_offset: 3.14  # yaw offset in align mode [rad]
     stop_and_turn:  # maximum yaw error above which the reference velocity is set to 0 to enable stop-and-turn behavior
         enable: False
         dang_min: 1  # angle threshold to trigger stop and turn [rad]
     yaw_align_dmin: 0.1  # minimum distance under which yaw alignment is disabled [m]
-    vref: 2  # norm of reference velocity [m/s]
+    vref: 1.75  # norm of reference velocity [m/s]
     wzref: 1  # norm of reference yawrate [rad/s]
     zref: 2  # desired hovering z for takeoff [m]
 
@@ -18,7 +18,7 @@ flags:
     enable_sdf: True  # enable collision prediction
     sdf_cost: False  # use sdf in cost
     sdf_constraint: True  # use sdf in constraints
-    vfov_constraint: True  # enable vertical FoV constraint
+    vfov_constraint: False  # enable vertical FoV constraint
     recursive_feasibility: False  # enable recursive feasibility constraints
     stability: False  # enable stability terminal cost if rec_feas is enabled
 
@@ -53,18 +53,21 @@ ros:
 mpc:
     model: att  # allowed models: acc, att, att_tau, rates, wrench, props
     weights:
-        pos:    [0, 0, 5]  # px, py, pz
-        vel:    [3, 3, 3]  # vx, vy, vz
-        att:    [50, 50, 100]  # roll, pitch, yaw
+        # pos:    [0, 0, 5]  # px, py, pz
+        # vel:    [3, 3, 3]  # vx, vy, vz
+        # att:    [50, 50, 100]  # roll, pitch, yaw
+        pos:    [2, 2, 1]  # px, py, pz 0
+        vel:    [5, 5, 5]  # vx, vy, vz 3
+        att:    [50, 50, 20]  # roll, pitch, yaw
         rates:  [0, 0, 3]  # wx, wy, wz
         acc:    0.05  # typically small value, used to penalize acc or aacc if applicable
         slack_df:       [200, 50]  # slack weights (L1, L2) on df constraint
         slack_fov:      [20, 0]  # slack weights (L1, L2) on fov constraint
         slack_brake:    None  # slack weights (L1, L2) on braking dist constraint
-    N: 20  # nb of shooting nodes
+    N: 15  # nb of shooting nodes
     T: 1.5  # lenght of horizon [s]
-    bound_margin: 0.15  # safety margin for collision constraint [m]
-    control_loop_time: 10  # minimum control period [ms]
+    bound_margin: 0.15 # 0.15  # safety margin for collision constraint [m]
+    control_loop_time: 1 #10  # minimum control period [ms]
     uniform_dt: True  # dt is uniformly sampled as T/N, or nonuniform to have denser sampling for the first shooting_nodes
     nb_short_nodes: 2  # number of shooting node with dense nonuniform sampling
     lm_reg: 10  # Levenberg Marquardt regularization value
@@ -80,16 +83,16 @@ mpc:
         q_d: [13, 14, 15, 16]
         latent: 17
     braking_dist:
-        degree: 4
-        coeff_file: braking_dist/gz/bdist_poly_deg4_3.npy
+        degree: 3
+        coeff_file: braking_dist/kookaburra/bdist_poly_deg3_3.npy
     stability:
-        a_b_min: 6.32
+        a_b_min: 3.36
 
 ## robot
 robot:
-    mass: 1.46
-    inertia: [0.017, 0.018, 0.028]
-    alloc:  # used only for RPM control
+    mass: 2.0
+    inertia: [0.017, 0.018, 0.028] ## TODO
+    alloc:
         cf: 0.02246
         ct: 0.00020673
         motors:
@@ -112,8 +115,8 @@ robot:
         wx: 2
         wy: 2
         wz: 3
-        ax: 4
-        ay: 4
+        ax: 3
+        ay: 3
         az: 3
         gamma: 20  # maximum mass-normalized thrust
         torques: 0  # maximum inertia-normalized body torques

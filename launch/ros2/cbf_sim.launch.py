@@ -41,7 +41,8 @@ def generate_launch_description():
         remappings=[
             ('~/obstacles', '/cbf_pc_selector/output_pc'),
             ('~/odom', [PythonExpression(["'/'", " + '", robot_name, "' + '/odom'"])]),
-            ('~/safe_cmd_twist', [PythonExpression(["'/'", " + '", robot_name, "' + '/cmd/acc'"])]),
+            # ('~/safe_cmd_twist', [PythonExpression(["'/'", " + '", robot_name, "' + '/cmd/acc'"])]),
+            ('~/safe_cmd_twist', '/cbf/cmd/acc'),
             ('~/cmd_in', '/sdf_nmpc/cmd/acc'),
         ],
         output='screen'

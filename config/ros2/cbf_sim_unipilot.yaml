@@ -1,10 +1,10 @@
 composite_cbf:
     ros__parameters:
-        epsilon: 0.2 #0.3
+        epsilon: 0.22 #0.3
         gain: 3.0
         power: 0.8
         sigma: 0.3
-        kappa: 100 #80.0
+        kappa: 100.0 #80.0
         gamma: 40.0
         alpha: 4.0
         lp_gain_in: 0.8 #0.4

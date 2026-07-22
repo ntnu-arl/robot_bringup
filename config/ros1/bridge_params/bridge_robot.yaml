@@ -10,6 +10,16 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
 
+  - topic: /tf
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+    direction: ros1_to_ros2
+  
+  - topic: /tf_static
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+    direction: ros1_to_ros2
+
   - topic: /controller/state_relay
     type: std_msgs/msg/String
     queue_size: 10

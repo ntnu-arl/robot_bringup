@@ -1,9 +1,8 @@
 <launch>
   <!-- All settings -->
   <arg name="rviz_en" default="false" />
-  <param name="use_sim_time" value="true"/>
 
-  <node pkg="tf" type="static_transform_publisher" name="tf_world_map" args="0 0 0 0 0 0 map world 10" />
+  <node pkg="tf" type="static_transform_publisher" name="tf_mimosa_map" args="0 0 0 0 0 0 mimosa_map world 10" />
 
   <!-- Config files -->
   <arg name="gbplanner_config_file" default="$(find robot_bringup)/config/ros1/gbplanner/robot/gbplanner_config.yaml" />
@@ -22,7 +21,7 @@
 		<remap from="/pointcloud" to="/mimosa_node/lidar/geometric/sm_cloud_ds" />
 		<rosparam command="load" file="$(arg gbplanner_config_file)" />
 		<rosparam command="load" file="$(arg map_config_file)" />
-    <remap from="transform" to="/rmf/base_link/lidar" />
+    <!-- <remap from="transform" to="/mimosa_lidar" /> -->
 		<remap from="manhole_detections" to="stable_detections" />
 		<param name="behavior_tree_path" value="$(find robot_bringup)/config/ros1/bt_xml/main_tree.xml"/>
 	</node>

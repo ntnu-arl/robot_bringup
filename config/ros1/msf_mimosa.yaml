@@ -1,5 +1,5 @@
 ######### OUTPUT FRAME #########
-core/msf_output_frame: mimosa_world
+core/msf_output_frame: mimosa_map
 ######### OUTPUT FRAME #########
 
 core/data_playback: true

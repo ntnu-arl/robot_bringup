@@ -2,7 +2,7 @@
     <arg name="record" default="true" />
     <arg name="record_path" />
 
-    <node pkg="rosbag" type="record" name="recorder_ssd" output="screen" respawn="false" launch-prefix="nice -n 19" if="$(arg record)" args="--split --size=1024 -o $(arg record_path)/parrot
+    <node pkg="rosbag" type="record" name="recorder_ssd" output="screen" respawn="false" launch-prefix="nice -n 19" if="$(arg record)" args="--split --size=1024 -o $(arg record_path)/quail
       /rosout
       /rosout_agg
       /rslidar_imu_data

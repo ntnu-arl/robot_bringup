@@ -14,7 +14,8 @@
     </node>
     
     <node name="rmf_obelix_pose_sensor_initialize_service" pkg="rosservice" type="rosservice" args="call --wait rmf_obelix_pose_sensor/pose_sensor/initialize_msf_scale 1.0" />
-  
-    
+
+    <!-- Throttled odometry for NMPC (keeps 1/4 of msf_core/odometry, matches magpie's proven config) -->
+    <node name="msf_drop" pkg="topic_tools" type="drop" args="/msf_core/odometry 3 4 /msf_core/odometry_50hz" />
 
 </launch>

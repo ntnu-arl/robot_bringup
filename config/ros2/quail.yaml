@@ -1,0 +1,148 @@
+name: "quail"
+
+## mission parameters
+ref:
+    yaw_mode: ref  # allowed modes: ref, align, current, zero
+    align_yaw_offset: 3.1415  # yaw offset in align mode [rad]
+    stop_and_turn:  # maximum yaw error above which the reference velocity is set to 0 to enable stop-and-turn behavior
+        enable: False
+        dang_min: 1  # angle threshold to trigger stop and turn [rad]
+    yaw_align_dmin: 0.15  # minimum distance under which yaw alignment is disabled [m]
+    vref: 2.0  # norm of reference velocity [m/s]
+    wzref: 1  # norm of reference yawrate [rad/s]
+    zref: 2  # desired hovering z for takeoff [m]
+
+## mission flags
+flags:
+    simulation: True  # kept True to match magpie's flight-tested config - this flag is separate from ROS use_sim_time
+    enable_sdf: True  # enable collision prediction
+    sdf_cost: False  # use sdf in cost
+    sdf_constraint: True  # use sdf in constraints - this is the collision-avoidance toggle
+    vfov_constraint: False  # enable vertical FoV constraint
+    recursive_feasibility: False  # enable recursive feasibility constraints
+    stability: False  # enable stability terminal cost if rec_feas is enabled
+
+## nn parameters (shared network weights - same across robots, do not change)
+nn:
+    size_latent: 128
+    vae_device: cuda
+    sdf_device: cpu
+    vae_weights: vae_lidar.pt
+    sdf_weights: sdf_lidar_25664.pt
+
+## ros-specific params
+ros:
+    control_interface: acc  # allowed interfaces: acc, TRPYr, TRrPrYr (not implemented), props (not implemented)
+    timeout_ref: 0.5  # allowed time without new reference before timing out controller [s]
+    timeout_img: 1  # allowed time without new image before timing out controller [s]
+    ref:
+        ref_mode: topic  # allowed modes: topic, joystick
+        stop_and_go: False  # go to wp with 0 velocity instead of having a sliding window as reference
+        # SAFE FIRST TEST: short 2m hop and back. Extend once verified.
+        wps: [[2.0, 0.0, 1.2, 0.0], [0.0, 0.0, 1.2, 0.0]]  # list of waypoints in ref_mode == cfg [m, m, m, rad]
+        wp_tol: 1.2
+        joystick_lp_alpha: 0.9  # low-pass parameter for joystick cmd smoothing
+    frames:
+        # Verified against quail's own mimosa.yaml/mimosa.launch TF tree (world_frame/body_frame/imu sensor_frame
+        # all match magpie's convention 1:1 - both robots run the same mimosa config).
+        world: world
+        body: mimosa_imu
+        sensor: mimosa_imu  # the depth image is calculated by transforming the point cloud from the lidar to the imu frame
+
+## mpc parameters (airframe-dependent, not sensor-dependent - copied unchanged from magpie's
+## flight-validated config since quail shares the same frame/props/size per hardware confirmation)
+mpc:
+    model: att  # allowed models: acc, att, att_tau, rates, wrench, props
+    weights:
+        pos:    [2, 2, 1]  # px, py, pz
+        vel:    [5, 5, 3]  # vx, vy, vz
+        att:    [50, 50, 20]  # roll, pitch, yaw
+        rates:  [0, 0, 5]  # wx, wy, wz
+        acc:    0.25  # typically small value, used to penalize acc or aacc if applicable
+        slack_df:       [200, 50]  # slack weights (L1, L2) on df constraint
+        slack_fov:      [20, 0]  # slack weights (L1, L2) on fov constraint
+        slack_brake:    None  # slack weights (L1, L2) on braking dist constraint
+    N: 10  # nb of shooting nodes
+    T: 1.5  # length of horizon [s]
+    bound_margin: 0.15  # safety margin for collision constraint [m]
+    control_loop_time: 1
+    uniform_dt: True
+    nb_short_nodes: 2
+    lm_reg: 10
+    shift: 0
+    fov_const_offset: 0.05
+    fov_ratio: 0.9
+    allow_dead_reck: False
+    max_solver_fail: 3
+    p_idx:
+        flag: 0
+        W_p_Co: [1, 2, 3]
+        W_R_Co: [4, 5, 6, 7, 8, 9, 10, 11, 12]
+        q_d: [13, 14, 15, 16]
+        latent: 17
+    # NOTE: braking_dist coefficients carried over unchanged from magpie.yaml (itself borrowed from a
+    # different airframe "kookaburra"). Not quail/magpie-specific - fine as a starting point, but worth
+    # recalibrating with quail's own braking-distance data eventually.
+    braking_dist:
+        degree: 3
+        coeff_file: braking_dist/kookaburra/bdist_poly_deg3_3.npy
+    stability:
+        a_b_min: 3.36
+
+## robot - TODO ITEMS BELOW NEED PHYSICAL VERIFICATION, see chat notes
+robot:
+    # TODO: VERIFY - magpie's measured AUW (RSM1 lidar + 3 cameras). Quail carries a Hesai JT128 (heavier,
+    # spinning mechanical lidar) + mmWave radar instead - weigh the actual assembled quail airframe and
+    # update this. Airframe/motors/props are otherwise identical per hardware confirmation.
+    mass: 2.0
+    inertia: [0.017, 0.018, 0.028]  # shared airframe - unchanged from magpie
+    alloc:  # shared airframe/motors - unchanged from magpie
+        cf: 0.02246
+        ct: 0.00020673
+        motors:
+            - [0.09, -0.09, -0.005, 0, 0, -1]  # x, y, z, alpha, beta, sign (-1 ccw, 1 cw)
+            - [-0.09, 0.09, -0.005, 0, 0, -1]
+            - [0.09, 0.09, -0.005, 0, 0, 1]
+            - [-0.09, -0.09, -0.005, 0, 0, 1]
+    # TODO: VERIFY BEFORE FLIGHT - candidate values below were derived programmatically from quail's own
+    # mimosa.yaml lidar.T_B_S calibration (position [-0.06605, -0.01878, 0.034] m, quaternion
+    # [0.383, -0.595, -0.383, 0.595]), converted to roll/pitch/yaw via the same euler2rot(ZYX/aerospace)
+    # convention used by collision_predictor_mpc/utils/math.py on magpie. NOT flight-verified - cross-check
+    # via the viz_sdf_3D_node visualization (does the observed SDF/point cloud line up with real obstacles?)
+    # before trusting this in an autonomous flight, since a wrong sign here means the collision model
+    # reasons about obstacles in the wrong place.
+    sensor_extrinsics:
+        position: [-0.06605, -0.01878, 0.034]
+        orientation: [1.5724, -0.4276, -1.5724]  # roll, pitch, yaw [rad] - candidate, see note above
+    size:
+        xy: 0.22  # shared airframe - unchanged from magpie
+        z: 0.1125
+    limits:
+        roll: 0.15  # conservative first-flight limits, same starting point as magpie
+        pitch: 0.15
+        vx: 3
+        vy: 3
+        vz: 3
+        wx: 2
+        wy: 2
+        wz: 0.7
+        ax: 2
+        ay: 2
+        az: 1.5
+        gamma: 15
+        torques: 0
+        wp: 25
+
+## sensor (network input spec - fixed by the trained weights, identical across robots regardless of
+## physical lidar model - do not change)
+sensor:
+    hfov: 3.1415
+    vfov: 0.7854
+    aspect_ratio: 4
+    dmax: 5
+    shape_imgs: [1, 128, 512]
+    is_depth: False
+    is_spherical: True
+    is_normalized: False
+    mm_resolution: 1000
+    dtype: float32

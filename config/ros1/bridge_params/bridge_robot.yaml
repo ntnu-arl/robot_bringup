@@ -5,6 +5,11 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
 
+  - topic: /msf_core/odometry_50hz
+    type: nav_msgs/msg/Odometry
+    queue_size: 10
+    direction: ros1_to_ros2
+
   - topic: /controller/state_relay
     type: std_msgs/msg/String
     queue_size: 10

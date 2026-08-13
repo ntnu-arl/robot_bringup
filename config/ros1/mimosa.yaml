@@ -57,7 +57,7 @@ graph:
 
 lidar:
   sensor_frame: mimosa_lidar
-  T_B_S: [-0.06605, -0.01878, 0.034, 0.707, 0.00, -0.707, 0.00] # x, y, z, x, y, z, w
+  T_B_S: [-0.06605, -0.01878, 0.034, 0.383, -0.595, -0.383, 0.595] # x, y, z, x, y, z, w
   T_B_OdometryLoggerFrame: [0, 0, 0, 0, 0, 0, 1] # x, y, z, x, y, z, w
   manager:
     log_level: warn
@@ -140,7 +140,7 @@ lidar:
 
 radar:
   sensor_frame: mimosa_radar
-  T_B_S: [0.080, -0.034, 0.016, 0.000, 0.259, 0.000, 0.966]
+  T_B_S: [0.080, -0.034, 0.016, 0.6830, 0.1830, -0.1830, 0.6830]
   manager:
     log_level: warn
     use_to_init: false

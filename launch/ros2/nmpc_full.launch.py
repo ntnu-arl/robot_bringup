@@ -13,21 +13,21 @@ def generate_launch_description():
     # build = LaunchConfiguration('build')
 
     declare_args = [
-        DeclareLaunchArgument('use_sim_time', default_value='true'),
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('ns', default_value='sdf_nmpc', description='Common namespace for nmpc nodes'),
         DeclareLaunchArgument(
-            'input_image', 
-            default_value='/rmf/lidar/range',
+            'input_image',
+            default_value='/img_node/range_image',
             description='Topic to remap to observation'
         ),
         DeclareLaunchArgument(
-            'odometry', 
-            default_value='/rmf/odom',
+            'odometry',
+            default_value='/msf_core/odometry_50hz',
             description='Odometry topic'
         ),
         DeclareLaunchArgument(
-            'cfg', 
-            default_value='nmpc_sim_lidar.yaml',
+            'cfg',
+            default_value='quail.yaml',
             description='Config file'
         ),
         # DeclareLaunchArgument('cfg', default_value='sim_camera.yaml', description='Config preset <cfg>.yaml'),
@@ -126,7 +126,9 @@ def generate_launch_description():
         # SetRemap(src='observation', dst='/rmf/lidar/range'),
         SetRemap(src='observation', dst=input_image),
         # SetRemap(src='cmd/acc', dst='/rmf/cmd/acc'),
-        SetRemap(src='cmd/acc', dst='/sdf_nmpc/cmd/acc'),
+        # /sdf_nmpc/cmd/acc is a dead end - nothing bridges it to ROS1 (confirmed against magpie's bridge config,
+        # which only bridges /mavros/setpoint_raw/local ros2->ros1). Publish there directly instead.
+        SetRemap(src='cmd/acc', dst='/mavros/setpoint_raw/local'),
         SetRemap(src='wps', dst='/gbplanner_path'),
         node_vae,
         node_ref_gen,

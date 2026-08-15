@@ -8,13 +8,14 @@ ref:
         enable: False
         dang_min: 1  # angle threshold to trigger stop and turn [rad]
     yaw_align_dmin: 0.15  # minimum distance under which yaw alignment is disabled [m]
-    vref: 2.0  # norm of reference velocity [m/s]
-    wzref: 1  # norm of reference yawrate [rad/s]
+    vref: 1.0  # norm of reference velocity [m/s]
+    wzref: 0.7  # norm of reference yawrate [rad/s]
     zref: 2  # desired hovering z for takeoff [m]
 
 ## mission flags
 flags:
-    simulation: True  # kept True to match magpie's flight-tested config - this flag is separate from ROS use_sim_time
+    simulation: False  # must be False on real hardware - with acc interface it also selects Twist vs PositionTarget
+        # on cmd/acc in sdfnmpc_node.py; True silently type-mismatched against the bridge's PositionTarget setpoint
     enable_sdf: True  # enable collision prediction
     sdf_cost: False  # use sdf in cost
     sdf_constraint: True  # use sdf in constraints - this is the collision-avoidance toggle

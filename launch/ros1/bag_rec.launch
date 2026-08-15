@@ -30,6 +30,11 @@
       /cam_right/image_raw/compressed
       /cam_right/synchronized/image_raw/compressed
 
+      /d455/color/image_raw/compressed
+      /d455/color/camera_info
+      /d455/depth/image_rect_raw/compressedDepth
+      /d455/depth/camera_info
+
       /royale_cam_royale_camera/camera_info
       /royale_cam_royale_camera/depth_image_0
       /royale_cam_royale_camera/gray_image_0

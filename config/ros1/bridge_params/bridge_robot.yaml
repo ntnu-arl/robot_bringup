@@ -101,3 +101,27 @@ topics:
     type: nav_msgs/msg/Path
     queue_size: 10
     direction: ros2_to_ros1
+
+  # --- RealSense D455 (auxiliary, not consumed by mimosa/gbplanner/NMPC - see
+  # docker-compose.robot.yml ros2_launch_realsense) - compressed only, for rviz/bag_rec.launch ---
+  - topic: /d455/color/image_raw/compressed
+    type: sensor_msgs/msg/CompressedImage
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /d455/color/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  # depth is 16-bit (Z16) - compressedDepth (PNG-based) is the correct image_transport plugin
+  # for that, unlike plain "compressed" (JPEG) which is meant for 8-bit color
+  - topic: /d455/depth/image_rect_raw/compressedDepth
+    type: sensor_msgs/msg/CompressedImage
+    queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /d455/depth/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    queue_size: 10
+    direction: ros2_to_ros1

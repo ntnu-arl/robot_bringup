@@ -189,6 +189,7 @@ RandomSamplerParams:
 PlanningParams:
   type:             kBasicExploration #kAdaptiveExploration, kBasicExploration
   rr_mode:          kGraph
+  graph_building_mode: kBasic
   exp_sensor_list:  ["OS064"]
   inspection_sensor_list:  ["Cam"]
   # exp_sensor_list:  ["Cam"]
@@ -219,7 +220,7 @@ PlanningParams:
 
   traverse_length_max: 10.0 # Maximum length of the best path will be truncated to for actual traversal
   traverse_time_max: 500.0
-  path_safety_enhance_enable: false  # Disable for ballast small, non corridor like environments
+  path_safety_enhance_enable: true  # Disable for ballast small, non corridor like environments
   augment_free_voxels_time: 3
   free_frustum_before_planning: false
   freespace_cloud_enable: false

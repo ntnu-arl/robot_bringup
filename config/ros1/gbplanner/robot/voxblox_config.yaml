@@ -7,8 +7,8 @@ use_freespace_pointcloud: True
 tsdf_voxels_per_side: 16 # Size of the block in voxblox
 tsdf_voxel_size: 0.2 # 0.2
 max_ray_length_m: 15
-min_ray_length_m: 0.5
-truncation_distance: 0.8
+min_ray_length_m: 0.9
+truncation_distance: 0.9
 voxel_carving_enabled: True
 color_mode: "color"
 verbose: False
@@ -46,7 +46,7 @@ use_const_weight: True # check
 use_weight_dropoff: True
 
 ### NEW SETTINGS FOR BRANCH feature/new_abort_criterion_for_fast_integrator ###
-max_weight: 20 #20-200
-clearing_ray_weight_factor: 0.1 # From: 0.1 #5 #ANYmal: 0.01 #Flyab: 0.05 #0.05-1.0
+max_weight: 200 #20-200
+clearing_ray_weight_factor: 0.5 # From: 0.1 #5 #ANYmal: 0.01 #Flyab: 0.05 #0.05-1.0
 #weight_ray_by_range: False
 occupancy_min_distance_voxel_size_factor: 1.0

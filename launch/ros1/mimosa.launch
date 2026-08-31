@@ -1,6 +1,6 @@
 <launch>
   <node pkg="tf" type="static_transform_publisher" name="tf000" args="0 0 0 0 0 0 mimosa_world world 10" />
-  <node pkg="tf" type="static_transform_publisher" name="tf_imu_imu_inv" args="0 0 0 3.14 0 0 mimosa_imu mimosa_imu_inv 10" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="tf_imu_imu_inv" args="0 0 0 3.14 0 0 mimosa_imu mimosa_imu_inv 10" /> -->
 
   <node pkg="mimosa" type="mimosa_node" name="mimosa_node" output="screen" clear_params="true" > # launch-prefix="taskset -c 0-3"
     <!-- New Data. You probably want this unless you are using old rosbags -->

@@ -64,7 +64,7 @@ BoundedSpaceParams:
     # min_val:        [-1.0, -300.0, -10.0]
     # max_val:        [32.0, 300.0, 2.0]
     min_val:        [-2.0, -40.0, 0.5]
-    max_val:        [30.0, 2.5, 2.0]
+    max_val:        [45.0, 2.5, 2.0]
     # min_val:        [-0.5, -2.5, -0.2]
     # max_val:        [4.0, 1.2, 2.0]
     # Room
@@ -197,7 +197,7 @@ PlanningParams:
   v_max:            1.0 # max velocity m/s
   v_homing_max:     0.9 # max velocity m/s
   yaw_rate_max:     0.2 # max angular velocity rad/s
-  yaw_tangent_correction: false # If true - all headings will be along the path segment
+  yaw_tangent_correction: true # If true - all headings will be along the path segment
   edge_length_min:  0.2
   edge_length_max:  3.0
   edge_overshoot:   0.0 # m - Account for possible tracking error by collision checking on an extended edge
@@ -292,7 +292,7 @@ PlanningParams:
     min_val:        [-5.0, -1.5, 0.5] # 1.6
     max_val:        [10.0, 10.5, 2.5]
 
-  geofence_checking_enable: true
+  geofence_checking_enable: false
 
 AdaptiveObbParams:
   type: kPca

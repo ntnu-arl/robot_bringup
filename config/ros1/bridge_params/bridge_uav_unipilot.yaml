@@ -101,8 +101,14 @@ services_2_to_1:
     type: std_srvs/SetBool
   - service: /planner_control_interface/std_srvs/stop
     type: std_srvs/Trigger
+  - service: /planner_control_interface/std_srvs/automatic_planning
+    type: std_srvs/Trigger
 
 services_1_to_2:
+  - service: /agentic_uas/start
+    type: std_srvs/srv/Trigger
+  - service: /agentic_uas/stop
+    type: std_srvs/srv/Trigger
   - service: /sdf_nmpc/takeoff
     type: std_srvs/srv/Trigger
   - service: /sdf_nmpc/set_flag

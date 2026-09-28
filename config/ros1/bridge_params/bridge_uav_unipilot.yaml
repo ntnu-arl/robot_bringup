@@ -5,6 +5,11 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
 
+  - topic: /gbplanner_status
+    type: std_msgs/msg/Bool
+    queue_size: 10
+    direction: ros1_to_ros2
+
   - topic: /vis/planning_global_graph
     type: visualization_msgs/msg/MarkerArray
     queue_size: 2

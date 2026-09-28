@@ -3,6 +3,8 @@ reasoning: "medium"
 initial_task: ""
 world_frame: map
 goal_tolerance: 2.0
+near_goal_tolerance: 3.0
+near_goal_stationary_timeout: 3.0
 planner_failure_grace: 5.0
 stationary_timeout: 8.0
 stationary_distance: 0.25
@@ -10,6 +12,14 @@ planner_start_delay: 0.5
 planner_start_timeout: 15.0
 max_goal_distance: 200.0
 max_candidates: 200
+max_graph_age: 300.0
+graph_min_spacing: 2.0
+graph_max_nodes: 5000
+prefetch_distance: 10.0
+prefetch_min_goal_distance: 7.0
+prefetch_max_age: 20.0
+camera_tf_wait: 0.5
+image_capture_interval: 0.5
 # keyframing:
 #   type: geometric
 #   max_keyframes: 4

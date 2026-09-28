@@ -143,6 +143,14 @@ Visualization Manager:
     - Class: rviz/Group
       Displays:
         - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /agentic_uas/viz/markers
+          Name: Agent Candidates and Keyviews
+          Namespaces:
+            {}
+          Queue Size: 10
+          Value: true
+        - Class: rviz/MarkerArray
           Enabled: false
           Marker Topic: /vis/planning_failed
           Name: PlanningFailed
@@ -347,6 +355,18 @@ Visualization Manager:
       Name: PlannerViz
     - Class: rviz/Group
       Displays:
+        - Class: rviz/Image
+          Enabled: true
+          Image Topic: /agentic_uas/viz/model_input
+          Max Value: 1
+          Median window: 5
+          Min Value: 0
+          Name: Agent Model Input
+          Normalize Range: true
+          Queue Size: 2
+          Transport Hint: raw
+          Unreliable: false
+          Value: true
         - Class: rviz/Image
           Enabled: true
           Image Topic: /rmf_unipilot/cam/rgb

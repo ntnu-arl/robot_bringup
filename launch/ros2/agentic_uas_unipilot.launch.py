@@ -9,12 +9,19 @@ def generate_launch_description():
     config = PathJoinSubstitution([
         FindPackageShare("robot_bringup"), "config", "ros2", "agentic_uas_unipilot.yaml"
     ])
+    system_prompt = PathJoinSubstitution([
+        FindPackageShare("robot_bringup"), "config", "ros2", "agentic_uas_system_prompt.txt"
+    ])
     return LaunchDescription([
         DeclareLaunchArgument("config_path", default_value=config),
+        DeclareLaunchArgument("system_prompt_path", default_value=system_prompt),
         DeclareLaunchArgument("log_level", default_value="info"),
         Node(
             package="agentic_uas", executable="agentic_uas_node", output="screen",
-            parameters=[{"config_path": LaunchConfiguration("config_path")}],
+            parameters=[{
+                "config_path": LaunchConfiguration("config_path"),
+                "system_prompt_path": LaunchConfiguration("system_prompt_path"),
+            }],
             arguments=["--ros-args", "--log-level",
                        ["agentic_uas:=", LaunchConfiguration("log_level")]],
         ),

@@ -4,8 +4,8 @@ initial_task: ""
 world_frame: map
 goal_tolerance: 2.0
 planner_failure_grace: 5.0
-max_goal_distance: 30.0
-max_candidates: 60
+max_goal_distance: 200.0
+max_candidates: 200
 # keyframing:
 #   type: geometric
 #   max_keyframes: 4

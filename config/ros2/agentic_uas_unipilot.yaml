@@ -1,0 +1,23 @@
+model: gpt-6-luna
+reasoning: "medium"
+initial_task: ""
+world_frame: map
+goal_tolerance: 2.0
+planner_failure_grace: 5.0
+max_goal_distance: 30.0
+max_candidates: 60
+# keyframing:
+#   type: geometric
+#   max_keyframes: 4
+#   distance: 2.0
+#   yaw: 0.6
+#   interval: 20.0
+# For task-relevance selection instead:
+keyframing:
+  type: clip
+  max_keyframes: 4
+  min_distance: 2.0
+  model: ViT-B-32
+  pretrained: laion2b_s34b_b79k
+  device: cuda
+  cpu_threads: 2

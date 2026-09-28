@@ -5,18 +5,17 @@ topics:
     queue_size: 10
     direction: ros1_to_ros2
 
-  - service: /sdf_nmpc/takeoff
-    type: std_srvs/srv/Trigger
-    queue_size: 10
-    direction: ros1_to_ros2
-  
-  - service: /sdf_nmpc/set_flag
-    type: std_srvs/srv/SetBool
-    queue_size: 10
+  - topic: /vis/planning_global_graph
+    type: visualization_msgs/msg/MarkerArray
+    queue_size: 2
     direction: ros1_to_ros2
 
+  - topic: /move_base_simple/goal
+    type: geometry_msgs/msg/PoseStamped
+    queue_size: 2
+    direction: ros2_to_ros1
 
-    # ros2 to ros1
+  # ros2 to ros1
   - topic: /rmf_unipilot/odom
     type: nav_msgs/msg/Odometry
     queue_size: 10
@@ -25,6 +24,11 @@ topics:
   - topic: /rmf_unipilot/lidar/points_downsampled
     type: sensor_msgs/msg/PointCloud2
     queue_size: 10
+    direction: ros2_to_ros1
+
+  - topic: /rmf_unipilot/cam/rgb
+    type: sensor_msgs/msg/Image
+    queue_size: 2
     direction: ros2_to_ros1
   
   - topic: /tf
@@ -76,3 +80,15 @@ topics:
     type: geometry_msgs/msg/TwistStamped
     queue_size: 10
     direction: ros2_to_ros1
+
+services_2_to_1:
+  - service: /gbplanner/switch_operation_mode
+    type: std_srvs/SetBool
+  - service: /planner_control_interface/std_srvs/stop
+    type: std_srvs/Trigger
+
+services_1_to_2:
+  - service: /sdf_nmpc/takeoff
+    type: std_srvs/srv/Trigger
+  - service: /sdf_nmpc/set_flag
+    type: std_srvs/srv/SetBool

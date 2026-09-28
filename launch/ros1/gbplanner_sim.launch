@@ -49,7 +49,7 @@
 
   <node pkg="rviz" type="rviz" name="gbplanner_ui" output="screen" args="-d $(find robot_bringup)/rviz/ros1/$(arg robot_name).rviz"/>
 
-  <include file="$(find joystick_remapper)/launch/joystick_remapper.launch"/>
+  <!-- <include file="$(find joystick_remapper)/launch/joystick_remapper.launch"/> -->
 
   <!-- <node pkg="manhole_detector" type="manhole_detector_node" name="manhole_detector_node" output="screen">
       <remap from="pcl_in" to="/rslidar_points" />

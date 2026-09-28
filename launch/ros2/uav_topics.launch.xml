@@ -12,7 +12,9 @@
         pkg="ros_gz_bridge"
         exec="parameter_bridge"
         name="ros_gz_bridge_clock"
-        args="/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock">
+        launch-prefix="bash -c 'until gz topic -i -t /world/map/clock 2>/dev/null | grep -q ^Publishers; do sleep 1; done; sleep 1; exec $0 $@'"
+        args="/world/map/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock">
+        <remap from="/world/map/clock" to="/clock"/>
     </node>
 
     
@@ -83,6 +85,14 @@
         </node>
 
         <!-- RGBD camera -->
+        <node
+            pkg="ros_gz_bridge"
+            exec="parameter_bridge"
+            name="ros_gz_bridge_rgb_camera_info"
+            args="$(var sensor_prefix)/rgb_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo">
+            <remap from="$(var sensor_prefix)/rgb_cam/camera_info" to="cam/rgb/camera_info"/>
+        </node>
+
         <node
             pkg="ros_gz_bridge"
             exec="parameter_bridge"

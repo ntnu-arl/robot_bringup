@@ -6,16 +6,21 @@
   <include path="./active_homing.xml" />
   <include path="./lnav.xml" />
   <BehaviorTree ID="MainTree">
-    <Sequence>
-      <ReactiveFallback>
-        <HomingCheck/>
-        <Sequence>
-          <SubTree ID="lge_homing"/>
-          <AlwaysFailure/>
-        </Sequence>
-      </ReactiveFallback>
-      <!-- <Homing/> -->
-      <SubTree ID="acthoming"/>
-    </Sequence>
+    <ReactiveFallback>
+      <Sequence>
+        <SwitchToLocalNavigation/>
+        <SubTree ID="lnav"/>
+      </Sequence>
+      <Sequence>
+        <ReactiveFallback>
+          <HomingCheck/>
+          <Sequence>
+            <SubTree ID="lge_homing"/>
+            <AlwaysFailure/>
+          </Sequence>
+        </ReactiveFallback>
+        <SubTree ID="acthoming"/>
+      </Sequence>
+    </ReactiveFallback>
   </BehaviorTree>
 </root>

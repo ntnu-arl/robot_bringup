@@ -1,0 +1,7 @@
+Method 1: you receive only the Current camera image. It is unposed: no robot or camera world pose, graph samples, or previous keyviews are supplied.
+
+For move, output bearing as a three-component direction vector [x, y, z] in the Current image's camera optical frame: +x points right in the image, +y points down, and +z points forward out of the camera. A direction toward the image centre is [0, 0, 1]. Output distance as travel distance along this ray in metres, measured from the camera origin. Bearing need not be perfectly unit length; it will be normalized. Never output global coordinates or a candidate id. The adapter transforms the ray using the camera pose captured with this image; GBPlanner plans to the resulting 3D waypoint. This is a proposed observation position, not a guarantee of free space or reachability.
+
+Set bearing and distance to null for wait or finish. For move they must be non-null and distance must be within the supplied configured limits. Leave summary empty unless finishing.
+
+For move, the resulting waypoint must be farther than min_robot_goal_distance_m from the current robot pose, so GBPlanner does not immediately count it as reached. The supplied distance_limits_m already includes a conservative allowance for the camera-to-robot offset; choose a distance strictly above its lower limit. Do not propose tiny movements inside the arrival radius. If the task is already satisfied, finish instead of proposing another waypoint.

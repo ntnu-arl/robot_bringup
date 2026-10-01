@@ -2,12 +2,19 @@
 #   type: graph_sample  # Method 3; choose image_bearing for method 1 or graph_bearing for method 2.
   # prompt_file: agentic_uas_method3_prompt.txt  # Optional override; defaults to the selected method's file.
 # For method 1 or 2, replace the block above with:
+# method:
+#   type: graph_bearing  # image_bearing: current image; graph_bearing: current image plus sparse graph.
+#   # prompt_file: agentic_uas_method1_prompt.txt  # Optional method instructions relative to this YAML.
+#   min_distance: 1.0  # Minimum permitted camera-relative travel distance in metres.
+#   max_distance: 30.0  # Maximum permitted camera-relative travel distance in metres.
+#   min_goal_distance: 4.0  # Minimum robot-to-waypoint separation in metres; keep above planner and agent arrival radii.
+# For method 4, replace the method block above with:
 method:
-  type: graph_bearing  # image_bearing: current image; graph_bearing: current image plus sparse graph.
-  # prompt_file: agentic_uas_method1_prompt.txt  # Optional method instructions relative to this YAML.
-  min_distance: 1.0  # Minimum permitted camera-relative travel distance in metres.
-  max_distance: 30.0  # Maximum permitted camera-relative travel distance in metres.
-  min_goal_distance: 4.0  # Minimum robot-to-waypoint separation in metres; keep above planner and agent arrival radii.
+  type: frontier  # Posed current image and keyviews; output a frontier or fallback sample ID.
+  # prompt_file: agentic_uas_method4_prompt.txt  # Method instructions relative to this YAML.
+  frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified global frontier snapshots from the marker adapter.
+  max_age: 30.0  # Maximum seconds since the latest frontier snapshot before using imaginary fallbacks.
+  min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; keep above arrival radii.
 model: gpt-6.1-sol  # Vision-language model used to choose navigation targets.
 reasoning: "medium"  # Reasoning effort requested from the vision-language model.
 initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.

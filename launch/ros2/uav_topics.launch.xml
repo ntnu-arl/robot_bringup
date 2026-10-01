@@ -2,19 +2,20 @@
 <launch>
 
     <arg name="world"/>
+    <arg name="world_name" default="map"/>
     <arg name="robot_name"/>
     <arg name="robot_type"/>
 
     <arg name="link_name" default="base_link"/>
-    <arg name="sensor_prefix" default="/world/map/model/$(var robot_name)/link/$(var link_name)/sensor"/>
+    <arg name="sensor_prefix" default="/world/$(var world_name)/model/$(var robot_name)/link/$(var link_name)/sensor"/>
 
     <node
         pkg="ros_gz_bridge"
         exec="parameter_bridge"
         name="ros_gz_bridge_clock"
-        launch-prefix="bash -c 'until gz topic -i -t /world/map/clock 2>/dev/null | grep -q ^Publishers; do sleep 1; done; sleep 1; exec $0 $@'"
-        args="/world/map/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock">
-        <remap from="/world/map/clock" to="/clock"/>
+        launch-prefix="bash -c 'until gz topic -i -t /world/$(var world_name)/clock 2>/dev/null | grep -q ^Publishers; do sleep 1; done; sleep 1; exec $0 $@'"
+        args="/world/$(var world_name)/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock">
+        <remap from="/world/$(var world_name)/clock" to="/clock"/>
     </node>
 
     
@@ -27,6 +28,9 @@
         <remap from="/model/$(var robot_name)/pose_static" to="/tf_static"/>
     </node> -->
     
+    <!-- The legacy ROS 1 bridge misses one-shot static TF published before it starts. -->
+    <node pkg="robot_bringup" exec="static_tf_republisher.py" name="static_tf_republisher"/>
+
     <!-- Dynamic poses - NO static QoS parameters -->
     <node
         pkg="ros_gz_bridge"

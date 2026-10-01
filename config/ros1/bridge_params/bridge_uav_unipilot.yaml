@@ -20,6 +20,11 @@ topics:
     queue_size: 2
     direction: ros2_to_ros1
 
+  - topic: /agentic_uas/status
+    type: std_msgs/msg/String
+    queue_size: 1
+    direction: ros2_to_ros1
+
   - topic: /agentic_uas/viz/markers
     type: visualization_msgs/msg/MarkerArray
     queue_size: 2
@@ -55,6 +60,11 @@ topics:
     type: tf2_msgs/msg/TFMessage
     queue_size: 10
     direction: ros2_to_ros1
+    qos:
+      history: keep_last
+      depth: 1
+      durability: transient_local
+      reliability: reliable
   
   - topic: /clock
     type: rosgraph_msgs/msg/Clock

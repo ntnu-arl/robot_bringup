@@ -1,27 +1,39 @@
-model: gpt-6-luna
-reasoning: "medium"
-initial_task: ""
-world_frame: map
-goal_tolerance: 2.0
-planner_failure_grace: 5.0
-stationary_timeout: 8.0
-stationary_distance: 0.25
-planner_start_delay: 0.5
-planner_start_timeout: 15.0
-max_goal_distance: 200.0
-max_candidates: 200
+model: gpt-6-luna  # Vision-language model used to choose navigation targets.
+reasoning: "medium"  # Reasoning effort requested from the vision-language model.
+initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.
+world_frame: map  # World frame used for camera poses and target coordinates.
+goal_tolerance: 2.0  # Distance in metres that immediately counts as reaching a target.
+near_goal_tolerance: 3.0  # Distance in metres within which the near-goal dwell timer runs.
+near_goal_stationary_timeout: 3.0  # Seconds inside the near-goal radius before accepting arrival, even with small motion.
+planner_failure_grace: 5.0  # Seconds to tolerate unsuccessful planning before rejecting the target.
+stationary_timeout: 8.0  # Seconds without sufficient displacement before rejecting a moving goal.
+stationary_distance: 0.25  # Displacement in metres needed to reset the stationary timer.
+planner_start_delay: 0.5  # Seconds to wait after publishing a target before starting the planner.
+planner_start_timeout: 15.0  # Seconds to wait for a path after requesting planner start.
+max_goal_distance: 200.0  # Maximum candidate distance in metres from the robot or prefetch search origin.
+max_candidates: 200  # Maximum number of target candidates offered to the vision-language model.
+max_graph_age: 300.0  # Seconds without observing a graph node before it expires.
+graph_min_spacing: 2.0  # Minimum separation in metres between persistent graph nodes.
+graph_max_nodes: 5000  # Maximum retained graph nodes; excess nodes are removed by oldest observation time.
+prefetch_distance: 10.0  # Distance in metres to the active target at which early inference can begin.
+prefetch_min_goal_distance: 7.0  # Minimum next-candidate distance in metres from the active target during early inference.
+prefetch_max_age: 20.0  # Maximum age in seconds of an early inference before its staged target is discarded.
+camera_tf_wait: 0.5  # Maximum seconds to wait for TF at an image timestamp before dropping that image.
+image_capture_interval: 0.5  # Minimum seconds between successfully captured camera observations.
+# Policy and settings used to retain a bounded set of camera observations.
 # keyframing:
-#   type: geometric
-#   max_keyframes: 4
-#   distance: 2.0
-#   yaw: 0.6
-#   interval: 20.0
+#   type: geometric  # Keyframe selection policy: geometric movement thresholds or CLIP task similarity.
+#   max_keyframes: 4  # Maximum number of retained keyframes, in addition to the current image.
+#   distance: 2.0  # Translation in metres that can trigger a new geometric keyframe.
+#   yaw: 0.6  # Orientation change in radians that can trigger a new geometric keyframe.
+#   interval: 20.0  # Elapsed seconds that can trigger a new geometric keyframe.
 # For task-relevance selection instead:
+# Policy and settings used to retain a bounded set of camera observations.
 keyframing:
-  type: clip
-  max_keyframes: 4
-  min_distance: 2.0
-  model: ViT-B-32
-  pretrained: laion2b_s34b_b79k
-  device: cuda
-  cpu_threads: 2
+  type: clip  # Keyframe selection policy: geometric movement thresholds or CLIP task similarity.
+  max_keyframes: 4  # Maximum number of retained keyframes, in addition to the current image.
+  min_distance: 2.0  # Minimum camera-position separation in metres between retained CLIP keyframes.
+  model: ViT-B-32  # OpenCLIP architecture used to score task relevance.
+  pretrained: laion2b_s34b_b79k  # Pretrained OpenCLIP weights used to encode images and task text.
+  device: cuda  # PyTorch device used for CLIP inference, such as cuda or cpu.
+  cpu_threads: 2  # Number of PyTorch CPU threads when the CLIP device is cpu.

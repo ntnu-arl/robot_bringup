@@ -1,0 +1,41 @@
+---
+model:
+  segmentation:
+    type: yoloe
+    model_name: /workspace/yoloe-11l-seg.pt
+    confidence: 0.4
+    iou: 0.85
+    output_size: 640
+  refinement:
+    dilate_masks: true
+  clip_model:
+    type: open_clip
+    model_name: ViT-B-32
+    tokenizer_name: ViT-B-32
+    pretrained: laion2b_s34b_b79k
+    cache_dir: /workspace/hf_models
+  use_pixelwise_embeddings: false
+  use_dense: false
+  dense_ratio: 0.9
+  max_batch: 10
+  max_batch_vlm: 6
+  compute_object_embeddings: false
+  text_embeddings: true
+  box_embeddings: false
+  mask_embeddings: true
+  text_embeddings_weight: 0.6
+  box_embeddings_weight: 0.0
+  mask_embeddings_weight: 0.4
+  cuda: true
+  max_depth: 7.0
+  min_depth: 0.05
+text_encoder_service:
+  layer_model:
+    type: open_clip
+    model_name: ViT-B-32
+    tokenizer_name: ViT-B-32
+    pretrained: laion2b_s34b_b79k
+    cache_dir: /workspace/hf_models
+  feature_model:
+    type: clip
+    model_name: ViT-B/32

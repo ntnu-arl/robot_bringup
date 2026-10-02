@@ -54,3 +54,6 @@ keyframing:
   pretrained: laion2b_s34b_b79k  # Pretrained OpenCLIP weights used to encode images and task text.
   device: cuda  # PyTorch device used for CLIP inference, such as cuda or cpu.
   cpu_threads: 2  # Number of PyTorch CPU threads when the CLIP device is cpu.
+
+# Complete scene graph snapshots cached for future scene reasoning.
+scene_graph_topic: /agentic_uas/scene_graph

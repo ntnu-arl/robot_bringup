@@ -1,0 +1,72 @@
+---
+graph:
+  layers:
+    objects: 2
+    agents: 2
+map_window:
+  type: spatial
+  max_radius_m: 8.0
+active_window:
+  full_update_separation_s: 0.2
+  volumetric_map:
+    voxels_per_side: 16
+    voxel_size: 0.1
+    truncation_distance: 0.3
+  tsdf:
+    semantic_integrator:
+      type: MLESemanticIntegrator
+    num_threads: 4
+  compute_occupancy: false
+frontend:
+  graph_connector:
+    layers: []
+  pgmo:
+    time_horizon: 15.0
+    d_graph_resolution: 2.5
+    mesh_resolution: 0.005
+  objects:
+    min_cluster_size: 40
+    cluster_tolerance: 0.25
+  use_frontiers: false
+  use_global_frontiers: false
+backend:
+  add_places_to_deformation_graph: false
+  optimize_on_lc: true
+  classify_rooms: NONE
+  enable_node_merging: true
+  update_functors:
+    agents:
+      type: UpdateAgentsFunctor
+      enable_agent_keyframes: false
+      enable_task_keyviews: false
+      task_keyview_top_k: 5
+      task_keyview_min_translation_m: 1.0
+      task_keyview_min_rotation_deg: 30.0
+      task_keyview_min_score: -1.0
+      clear_task_keyviews_on_new_task: true
+    objects:
+      type: UpdateObjectsFunctor
+  pgmo:
+    run_mode: FULL  # kimera_pgmo run mode FULL is required
+    embed_trajectory_delta_t: 5.0
+    num_interp_pts: 3
+    interp_horizon: 10.0
+    optimizer:
+      type: KimeraRpgoOptimizer
+      solver: LM
+      gnc:
+        inlier_probability: 0.9
+        mu_step: 1.6
+        max_iterations: 100
+    add_initial_prior: true
+    covariance:
+      odom: 1.0e-02
+      loop_close: 5.0e-02
+      sg_loop_close: 1.0e-01
+      prior: 1.0e-02
+      mesh_mesh: 1.0e-02
+      pose_mesh: 1.0e-02
+      place_mesh: 1.0e-02
+      place_edge: 10.0
+      place_merge: 10.0
+      object_merge: 10.0

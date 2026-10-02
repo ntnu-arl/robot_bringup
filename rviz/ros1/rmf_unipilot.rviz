@@ -142,6 +142,14 @@ Visualization Manager:
       Topic: /ground_truth/odometry_throttled
       Unreliable: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /hydra_visualizer/graph
+      Name: Scene Graph
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
     - Class: rviz/Group
       Displays:
         - Class: rviz/MarkerArray

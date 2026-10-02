@@ -1,0 +1,8 @@
+<launch>
+  <arg name="role" default="send"/>
+  <arg name="config_path" default="$(find-pkg-share robot_bringup)/config/ros2/scene_graph/sensor_bridge.yaml"/>
+  <node pkg="robot_bringup" exec="scene_graph_sensor_bridge.py" output="screen">
+    <param from="$(var config_path)"/>
+    <param name="role" value="$(var role)"/>
+  </node>
+</launch>

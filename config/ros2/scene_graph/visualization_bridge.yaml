@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    # Separate outbound connection from the sensor and JSON graph relays.
+    endpoint: tcp://127.0.0.1:8004
+    # Native nodes, edges, labels and object bounding boxes; no mesh topic.
+    topics: [/hydra_visualizer/graph]
+    types: [visualization_msgs/msg/MarkerArray]
+    # Hydra publishes complete graph drawings with transient-local durability.
+    transient_local_topics: [/hydra_visualizer/graph]
+    # Replay the latest drawing for late bridges and RViz subscribers.
+    latched_topics: [/hydra_visualizer/graph]

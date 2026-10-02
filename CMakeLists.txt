@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(robot_bringup)
 
 # Detect ROS version
@@ -53,7 +53,7 @@ else()
     DESTINATION share/${PROJECT_NAME}/
     )
 
-    file(GLOB PY_SCRIPTS scripts/ros2/*.py)
+    file(GLOB PY_SCRIPTS CONFIGURE_DEPENDS scripts/ros2/*.py)
     install(PROGRAMS
         ${PY_SCRIPTS}
         DESTINATION lib/${PROJECT_NAME}

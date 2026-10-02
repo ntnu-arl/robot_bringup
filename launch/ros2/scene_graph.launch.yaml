@@ -1,0 +1,77 @@
+---
+launch:
+  - arg: {name: uav_name, default: rmf_unipilot}
+  - arg: {name: use_sim_time, default: 'true'}
+  - arg: {name: min_separation_s, default: '0.4', description: Minimum interval between semantic RGB-D inputs}
+  - arg: {name: start_rviz, default: 'false'}
+  - arg: {name: graph_endpoint, default: 'tcp://127.0.0.1:8002', description: Native Spark-DSG binary graph for the Humble agent}
+  - arg: {name: config_dir, default: $(find-pkg-share robot_bringup)/config/ros2/scene_graph}
+  - arg: {name: labelspace_dir, default: $(find-pkg-share hydra)/config/label_spaces}
+
+  # Relay original Humble sensor payloads into Jazzy's isolated DDS domain.
+  # RGB and metric depth share intrinsics and coincident optical poses in this model.
+  - set_remap: {from: hydra/input/front_cam/depth_registered/image_rect, to: /$(var uav_name)/cam/depth}
+  - set_remap: {from: hydra/input/front_cam/rgb/image_raw, to: /$(var uav_name)/cam/rgb}
+  - set_remap: {from: hydra/input/front_cam/rgb/camera_info, to: /$(var uav_name)/cam/rgb/camera_info}
+  - set_remap: {from: hydra/input/front_cam/semantic/image_raw, to: /semantic_inference/semantic/image_raw}
+  - set_remap: {from: hydra/input/front_cam/semantic/full_features, to: /semantic_inference/semantic/full_features}
+  - set_remap: {from: hydra/input/front_cam/feature, to: /semantic_inference/semantic/feature}
+
+  - node:
+      pkg: robot_bringup
+      exec: scene_graph_sensor_bridge.py
+      name: scene_graph_sensor_receiver
+      launch-prefix: /developer/semantics_env/bin/python3
+      output: screen
+      param:
+        - from: $(var config_dir)/sensor_bridge.yaml
+        - {name: role, value: receive}
+
+  - group:
+      - set_remap: {from: color/image_raw, to: /$(var uav_name)/cam/rgb}
+      - set_remap: {from: depth/image_raw, to: /$(var uav_name)/cam/depth}
+      - set_remap: {from: camera_info, to: /$(var uav_name)/cam/rgb/camera_info}
+      - set_remap: {from: new_labels, to: /hydra/labels/new_labels}
+      - include:
+          file: $(find-pkg-share semantic_inference_ros)/launch/openset_segmentation.launch.yaml
+          arg:
+            - {name: min_separation_s, value: $(var min_separation_s)}
+            - {name: labelspace_name, value: ade20k_full}
+            - {name: labelspace_dir, value: $(var labelspace_dir)}
+            - {name: config_path_semantics, value: $(var config_dir)/yoloe-openclip_vit32b.yaml}
+
+  # All extrinsics come from the simulator's existing TF publishers.
+  - include:
+      file: $(find-pkg-share hydra_ros)/launch/hydra.launch.yaml
+      arg:
+        - {name: dataset, value: unipilot_sim}
+        - {name: hydra_config_path, value: $(var config_dir)/hydra_pipeline.yaml}
+        - {name: ros_input_config_path, value: $(var config_dir)/ros_input.yaml}
+        - {name: labelspace, value: ade20k_full}
+        - {name: labelspace_path, value: $(var labelspace_dir)/ade20k_full_label_space.yaml}
+        - {name: use_sim_time, value: $(var use_sim_time)}
+        - {name: sensor_frame, value: $(var uav_name)/base_link/rgb_cam/optical}
+        - {name: robot_frame, value: $(var uav_name)/base_link}
+        - {name: odom_frame, value: map}
+        - {name: map_frame, value: map}
+        - {name: zmq_url, value: $(var graph_endpoint)}
+        - {name: zmq_send_mesh, value: 'false'}
+        - name: extra_yaml
+          value: >-
+            {enable_zmq_interface: true, input: {inputs: {front_cam: {sensor: {extrinsics: {type: ros, robot_frame: $(var uav_name)/base_link, sensor_frame: $(var uav_name)/base_link/rgb_cam/optical}}}}}}
+        - {name: active_window_sinks_path, value: $(var config_dir)/minimal_active_window_sinks.yaml}
+        - {name: gvd_places_sinks_path, value: $(var config_dir)/disable_optional_module.yaml}
+        - {name: places_2d_sinks_path, value: $(var config_dir)/disable_optional_module.yaml}
+        - {name: occupancy_sinks_path, value: $(var config_dir)/empty_sinks.yaml}
+        - {name: global_frontiers_sinks_path, value: $(var config_dir)/empty_sinks.yaml}
+        - {name: start_rviz, value: $(var start_rviz)}
+
+  - node:
+      pkg: robot_bringup
+      exec: scene_graph_sensor_bridge.py
+      name: scene_graph_visualization_sender
+      launch-prefix: /developer/semantics_env/bin/python3
+      output: screen
+      param:
+        - from: $(var config_dir)/visualization_bridge.yaml
+        - {name: role, value: send}

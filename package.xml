@@ -17,6 +17,12 @@
   <depend condition="$ROS_VERSION == 2">rclpy</depend>
   <exec_depend condition="$ROS_VERSION == 2">tf2_msgs</exec_depend>
   <exec_depend condition="$ROS_VERSION == 2">geometry_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">sensor_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">visualization_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">rosgraph_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">rosidl_runtime_py</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">python3-zmq</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">python3-yaml</exec_depend>
 
   <export>
     <build_type condition="$ROS_VERSION == 1">catkin</build_type>

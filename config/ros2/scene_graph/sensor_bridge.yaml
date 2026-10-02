@@ -1,0 +1,27 @@
+/**:
+  ros__parameters:
+    # Local TCP endpoint for unchanged sensor message payloads.
+    endpoint: tcp://127.0.0.1:8003
+    # Only these topics cross the distribution boundary.
+    topics:
+      - /rmf_unipilot/cam/rgb
+      - /rmf_unipilot/cam/depth
+      - /rmf_unipilot/cam/rgb/camera_info
+      - /rmf_unipilot/cam/camera_info
+      - /tf
+      - /tf_static
+      - /clock
+    # Standard message definitions verified between Humble and Jazzy.
+    types:
+      - sensor_msgs/msg/Image
+      - sensor_msgs/msg/Image
+      - sensor_msgs/msg/CameraInfo
+      - sensor_msgs/msg/CameraInfo
+      - tf2_msgs/msg/TFMessage
+      - tf2_msgs/msg/TFMessage
+      - rosgraph_msgs/msg/Clock
+    # Retain calibration and static TF for Hydra startup or container restarts.
+    latched_topics:
+      - /rmf_unipilot/cam/rgb/camera_info
+      - /rmf_unipilot/cam/camera_info
+      - /tf_static

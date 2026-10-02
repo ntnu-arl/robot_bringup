@@ -36,6 +36,16 @@ topics:
     direction: ros2_to_ros1
 
   # ros2 to ros1
+  - topic: /hydra_visualizer/graph
+    type: visualization_msgs/msg/MarkerArray
+    queue_size: 10
+    direction: ros2_to_ros1
+    qos:
+      history: keep_last
+      depth: 1
+      durability: transient_local
+      reliability: reliable
+
   - topic: /rmf_unipilot/odom
     type: nav_msgs/msg/Odometry
     queue_size: 10
@@ -48,6 +58,16 @@ topics:
 
   - topic: /rmf_unipilot/cam/rgb
     type: sensor_msgs/msg/Image
+    queue_size: 2
+    direction: ros2_to_ros1
+
+  - topic: /rmf_unipilot/cam/depth
+    type: sensor_msgs/msg/Image
+    queue_size: 2
+    direction: ros2_to_ros1
+
+  - topic: /rmf_unipilot/cam/camera_info
+    type: sensor_msgs/msg/CameraInfo
     queue_size: 2
     direction: ros2_to_ros1
   

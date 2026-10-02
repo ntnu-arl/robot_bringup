@@ -1,20 +1,131 @@
+# NAVIGATION METHOD SELECTION
+# Compose launches read robot_bringup/config/ros2/agentic_uas_unipilot.yaml.
+# Standalone `ros2 launch agentic_uas unipilot.launch.py` reads config/unipilot.yaml.
+# Replace the ENTIRE active method block below with ONE example, removing its
+# leading '# ' on each line. Leave all other examples commented; never define
+# multiple active method blocks. Restart the agent to load the new selection.
+# Unlisted parameters use Spark Config defaults. The method-specific prompt is
+# chosen automatically; remove an old prompt_file override when changing methods.
+# All methods ultimately send a global 3D waypoint to GBPlanner target reach.
+# Submit a task and call /agentic_uas/start (or Start Agent in RViz) to begin;
+# robot initialization remains manual. SetTask alone does not start an idle agent.
+# keyframing settings apply to methods 3-6; methods 1-2 use only Current.
+# Current is the latest valid camera image; keyviews are retained camera images.
+# A posed image includes its camera position and orientation in world_frame.
+#
+# METHOD 1: image_bearing
+# Input: plain Current image. No graph, projected samples, keyviews or world poses
+# are supplied to the model. Output: a continuous bearing and metric distance
+# in Current's optical frame (x right, y down, z forward). The adapter normalizes
+# the bearing and uses the captured camera TF to compute the world waypoint.
+# Example:
 # method:
-#   type: graph_sample  # Method 3; choose image_bearing for method 1 or graph_bearing for method 2.
-  # prompt_file: agentic_uas_method3_prompt.txt  # Optional override; defaults to the selected method's file.
-# For method 1 or 2, replace the block above with:
+#   type: image_bearing  # Current image only; generate an optical bearing and distance.
+#   min_distance: 1.0  # Minimum distance in metres from the captured camera origin.
+#   max_distance: 30.0  # Maximum camera-relative distance; respect max_goal_distance too.
+#   min_goal_distance: 4.0  # Minimum robot-to-target distance; keep above arrival radii.
+#
+# METHOD 2: graph_bearing
+# Input: sparse graph samples in Current's camera frame, projected IDs on Current.
+# No keyviews or world poses are supplied. Output: a continuous optical bearing
+# and distance, transformed as in method 1; it is NOT snapped to a sample ID.
+# Samples provide spatial references. Imaginary samples are used if none exist.
+# Example:
 # method:
-#   type: graph_bearing  # image_bearing: current image; graph_bearing: current image plus sparse graph.
-#   # prompt_file: agentic_uas_method1_prompt.txt  # Optional method instructions relative to this YAML.
-#   min_distance: 1.0  # Minimum permitted camera-relative travel distance in metres.
-#   max_distance: 30.0  # Maximum permitted camera-relative travel distance in metres.
-#   min_goal_distance: 4.0  # Minimum robot-to-waypoint separation in metres; keep above planner and agent arrival radii.
-# For method 4, replace the method block above with:
+#   type: graph_bearing  # Sparse samples plus Current; generate a bearing and distance.
+#   min_distance: 1.0  # Minimum distance in metres from the captured camera origin.
+#   max_distance: 30.0  # Maximum camera-relative distance; respect max_goal_distance too.
+#   min_goal_distance: 4.0  # Minimum robot-to-target distance; keep above arrival radii.
+#
+# METHOD 3: graph_sample
+# Input: sparse global graph, posed Current image and posed keyviews, with sample
+# IDs projected into each image. Output: one supplied navigation candidate_id.
+# graph_min_spacing controls sparsification; max_candidates limits offered graph
+# samples. Imaginary local samples bootstrap decisions when graph samples are absent.
+# Example:
+# method:
+#   type: graph_sample  # Select a sparse graph sample using posed observations.
+#
+# METHOD 4: frontier
+# Input: GBPlanner frontiers, posed Current image and posed keyviews, with projected
+# candidate IDs. Output: one supplied frontier candidate_id. Frontiers are NOT
+# sparsified or capped by max_candidates, but distance, freshness and visit checks
+# still apply. If no eligible frontiers remain, use sparse graph samples, then
+# imaginary samples if neither real source supplies an eligible candidate.
+# Example:
+# method:
+#   type: frontier  # Select a frontier or an explicitly identified fallback candidate.
+#   frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified frontier PoseArray feed.
+#   max_age: 30.0  # Seconds before a frontier snapshot expires and fallback selection begins.
+#   min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; exceed arrival radii.
+#
+# METHOD 5: graph_scene_graph
+# Input/output: method 3 plus Hydra's complete semantic object layer. Each object
+# has a readable label, centroid, bounding box and native graph adjacency; robot
+# trajectory nodes are omitted. Output remains a navigation sample candidate_id,
+# NOT an object ID. The reply also contains scene_graph_description.
+# Requires top-level scene_graph.enabled: true and the scene-graph launch profile:
+# make launch DOCKER_COMPOSE_FILE=docker-compose.uav_nmpc_unipilot_scene_graph_sim.yml
+# Example:
+# method:
+#   type: graph_scene_graph  # Sparse navigation samples plus semantic scene evidence.
+#   scene_graph:
+#     labelspace_file: /scene_graph/label_spaces/ade20k_full_label_space.yaml  # Shared Hydra source file.
+#     object_layer: 2  # Complete static object layer, excluding partitioned robot poses.
+#     world_frame: map  # Must match Hydra map_frame and this agent's world_frame.
+#     projection:
+#       near_clip: 0.1  # Minimum optical depth in metres when clipping box edges.
+#       line_width: 2  # Object wireframe thickness in image pixels.
+#       depth_occlusion: true  # Suppress unverified boxes and clip edges behind measured foreground geometry.
+#       depth_tolerance: 0.15  # Metres allowed for depth noise and imperfect box geometry.
+#       min_visible_fraction: 0.05  # Minimum fraction of sampled box pixels supported by observed surfaces.
+#       min_visible_samples: 3  # Minimum number of depth-supported samples needed to label an object.
+#       visibility_grid: 32  # Maximum sample count along each projected box axis.
+#     depth:
+#       image_topic: /rmf_unipilot/cam/depth  # Metric depth images paired with RGB by capture time.
+#       camera_info_topic: /rmf_unipilot/cam/camera_info  # Depth intrinsics for TF-based RGB registration.
+#       sync_queue_size: 16  # Maximum queued images per camera awaiting identical capture stamps.
+#
+# METHOD 6: frontier_scene_graph
+# Input/output: method 4 plus the same semantic object evidence as method 5.
+# Output remains a frontier candidate_id, or a supplied graph/imaginary fallback
+# ID when no eligible frontiers exist. Frontiers remain unsparsified. The reply
+# also contains scene_graph_description. Requires the same receiver and launch
+# profile as method 5. Object IDs cannot be sent as navigation targets.
+# Example:
 method:
-  type: frontier  # Posed current image and keyviews; output a frontier or fallback sample ID.
-  # prompt_file: agentic_uas_method4_prompt.txt  # Method instructions relative to this YAML.
-  frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified global frontier snapshots from the marker adapter.
-  max_age: 30.0  # Maximum seconds since the latest frontier snapshot before using imaginary fallbacks.
-  min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; keep above arrival radii.
+  type: frontier_scene_graph  # Frontier navigation guided by semantic scene evidence.
+  frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified frontier PoseArray feed.
+  max_age: 30.0  # Seconds before a frontier snapshot expires and fallback selection begins.
+  min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; exceed arrival radii.
+  scene_graph:
+    labelspace_file: /scene_graph/label_spaces/ade20k_full_label_space.yaml  # Shared Hydra source file.
+    object_layer: 2  # Complete static object layer, excluding partitioned robot poses.
+    world_frame: map  # Must match Hydra map_frame and this agent's world_frame.
+    projection:
+      near_clip: 0.1  # Minimum optical depth in metres when clipping box edges.
+      line_width: 2  # Object wireframe thickness in image pixels.
+      depth_occlusion: true  # Suppress unverified boxes and clip edges behind measured foreground geometry.
+      depth_tolerance: 0.15  # Metres allowed for depth noise and imperfect box geometry.
+      min_visible_fraction: 0.05  # Minimum fraction of sampled box pixels supported by observed surfaces.
+      min_visible_samples: 3  # Minimum number of depth-supported samples needed to label an object.
+      visibility_grid: 32  # Maximum sample count along each projected box axis.
+    depth:
+      image_topic: /rmf_unipilot/cam/depth  # Metric depth images paired with RGB by capture time.
+      camera_info_topic: /rmf_unipilot/cam/camera_info  # Depth intrinsics for TF-based RGB registration.
+      sync_queue_size: 16  # Maximum queued images per camera awaiting identical capture stamps.
+#
+# SCENE-GRAPH LABELSPACE (methods 5-6)
+# Compose mounts Hydra's original config/label_spaces directory at the path above
+# in BOTH containers; no YAML is copied into agentic_uas or robot_bringup.
+# SCENE_GRAPH_LABELSPACE_DIR overrides the shared host directory for both services.
+# Outside Docker, set labelspace_file to Hydra's actual YAML path, or pass
+# labelspace_file:=/path/to/ade20k_full_label_space.yaml to the agent launch.
+# A nonempty launch argument overrides method.scene_graph.labelspace_file.
+# Before Hydra's first update, the model is told that semantic evidence is unavailable.
+#
+# ACTIVE METHOD (replace this block to select one of the examples above)
+
 model: gpt-6.1-sol  # Vision-language model used to choose navigation targets.
 reasoning: "medium"  # Reasoning effort requested from the vision-language model.
 initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.
@@ -28,7 +139,7 @@ stationary_distance: 0.25  # Displacement in metres needed to reset the stationa
 planner_start_delay: 0.5  # Seconds to wait after publishing a target before starting the planner.
 planner_start_timeout: 15.0  # Seconds to wait for a path after requesting planner start.
 max_goal_distance: 200.0  # Maximum candidate distance in metres from the robot or prefetch search origin.
-max_candidates: 200  # Maximum number of target candidates offered to the vision-language model.
+max_candidates: 200  # Maximum offered graph samples; frontier candidates are not capped by this value.
 max_graph_age: 300.0  # Seconds without observing a graph node before it expires.
 graph_min_spacing: 2.0  # Minimum separation in metres between persistent graph nodes.
 graph_max_nodes: 5000  # Maximum retained graph nodes; excess nodes are removed by oldest observation time.
@@ -55,7 +166,7 @@ keyframing:
   device: cuda  # PyTorch device used for CLIP inference, such as cuda or cpu.
   cpu_threads: 2  # Number of PyTorch CPU threads when the CLIP device is cpu.
 
-# Native Hydra graph cached directly for future scene reasoning.
+# Native Hydra graph used by methods 5 and 6; other methods do not feed it to the model.
 scene_graph:
   enabled: true  # Receive the optional scene graph without waiting for Hydra at startup.
   endpoint: tcp://127.0.0.1:8002  # Native C++ Spark-DSG publisher in the Jazzy container.

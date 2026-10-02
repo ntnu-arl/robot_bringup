@@ -1,7 +1,0 @@
----
-# Jazzy exporter address, accessible over the containers' host network.
-endpoint: tcp://127.0.0.1:8002
-# Complete graph snapshots consumed by the task agent's placeholder subscription.
-output_topic: /agentic_uas/scene_graph
-# Wall-clock interval for nonblocking reception in seconds.
-poll_interval: 0.1

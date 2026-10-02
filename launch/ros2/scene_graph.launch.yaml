@@ -4,7 +4,7 @@ launch:
   - arg: {name: use_sim_time, default: 'true'}
   - arg: {name: min_separation_s, default: '0.4', description: Minimum interval between semantic RGB-D inputs}
   - arg: {name: start_rviz, default: 'false'}
-  - arg: {name: graph_endpoint, default: 'tcp://127.0.0.1:8002', description: Versioned JSON graph snapshots for Humble consumers}
+  - arg: {name: graph_endpoint, default: 'tcp://127.0.0.1:8002', description: Native Spark-DSG binary graph for the Humble agent}
   - arg: {name: config_dir, default: $(find-pkg-share robot_bringup)/config/ros2/scene_graph}
   - arg: {name: labelspace_dir, default: $(find-pkg-share hydra)/config/label_spaces}
 
@@ -54,9 +54,11 @@ launch:
         - {name: robot_frame, value: $(var uav_name)/base_link}
         - {name: odom_frame, value: map}
         - {name: map_frame, value: map}
+        - {name: zmq_url, value: $(var graph_endpoint)}
+        - {name: zmq_send_mesh, value: 'false'}
         - name: extra_yaml
           value: >-
-            {input: {inputs: {front_cam: {sensor: {extrinsics: {type: ros, robot_frame: $(var uav_name)/base_link, sensor_frame: $(var uav_name)/base_link/rgb_cam/optical}}}}}}
+            {enable_zmq_interface: true, input: {inputs: {front_cam: {sensor: {extrinsics: {type: ros, robot_frame: $(var uav_name)/base_link, sensor_frame: $(var uav_name)/base_link/rgb_cam/optical}}}}}}
         - {name: active_window_sinks_path, value: $(var config_dir)/minimal_active_window_sinks.yaml}
         - {name: gvd_places_sinks_path, value: $(var config_dir)/disable_optional_module.yaml}
         - {name: places_2d_sinks_path, value: $(var config_dir)/disable_optional_module.yaml}
@@ -73,14 +75,3 @@ launch:
       param:
         - from: $(var config_dir)/visualization_bridge.yaml
         - {name: role, value: send}
-
-  - node:
-      pkg: robot_bringup
-      exec: scene_graph_exporter.py
-      name: scene_graph_exporter
-      launch-prefix: /developer/semantics_env/bin/python3
-      output: screen
-      param:
-        - {name: endpoint, value: $(var graph_endpoint)}
-        - {name: labelspace_path, value: $(var labelspace_dir)/ade20k_full_label_space.yaml}
-        - {name: use_sim_time, value: $(var use_sim_time)}

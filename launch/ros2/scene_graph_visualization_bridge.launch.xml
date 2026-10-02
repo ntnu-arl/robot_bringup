@@ -1,0 +1,7 @@
+<launch>
+  <arg name="config_path" default="$(find-pkg-share robot_bringup)/config/ros2/scene_graph/visualization_bridge.yaml"/>
+  <node pkg="robot_bringup" exec="scene_graph_sensor_bridge.py" name="scene_graph_visualization_receiver" output="screen">
+    <param from="$(var config_path)"/>
+    <param name="role" value="receive"/>
+  </node>
+</launch>

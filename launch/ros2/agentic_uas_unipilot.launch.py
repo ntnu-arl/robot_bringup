@@ -17,6 +17,7 @@ def generate_launch_description():
         DeclareLaunchArgument("system_prompt_path", default_value=system_prompt),
         DeclareLaunchArgument("log_level", default_value="info"),
         DeclareLaunchArgument("method", default_value=""),
+        DeclareLaunchArgument("run_directory", default_value=""),
         DeclareLaunchArgument("labelspace_file", default_value="",
                               description="Override the method's Hydra labelspace file path"),
         Node(
@@ -24,6 +25,7 @@ def generate_launch_description():
             parameters=[{
                 "config_path": LaunchConfiguration("config_path"),
                 "method": LaunchConfiguration("method"),
+                "run_directory": LaunchConfiguration("run_directory"),
                 "labelspace_file": LaunchConfiguration("labelspace_file"),
                 "system_prompt_path": LaunchConfiguration("system_prompt_path"),
             }],

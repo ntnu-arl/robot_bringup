@@ -1,0 +1,181 @@
+# Pilot routes are not certified. Region positions remain approximate; visibility uses actual named visual meshes.
+# Ground-truth coordinates belong only to the evaluator, never the task agent.
+version: 1
+physics_step_sec: 0.001  # UAV control requires 1 ms; saved trial copies normalize this without editing source worlds.
+runtime:
+  min_free_disk_gb: 2.0  # Stop recording before disk exhaustion and preserve a flush margin.
+  startup_timeout_sec: 240.0  # Wall seconds allowed for sensors, services and takeoff.
+  takeoff_height: 2.0  # Must match NMPC ref.zref; checked by the evaluation harness.
+  takeoff_tolerance: 0.3  # Maximum altitude error before starting the task.
+  start_position_tolerance: 2.0  # Maximum horizontal drift from the intended spawn.
+  settle_time_sec: 2.0  # Require stable initialization for this many wall seconds.
+  require_scene_graph: true  # Warm up the same perception stack for all six methods.
+  jpeg_quality: 85  # Quality for the full-rate RGB recording stream.
+  lidar_interval_sec: 0.5  # Online observer wall-time sampling interval.
+  decision_flush_timeout_sec: 60.0  # Bound the wait for in-flight API results after stop.
+metrics:
+  voxel_size: 0.5  # Metres per observed occupied-voxel cell, shared across methods.
+  moving_speed: 0.1  # Metres per second separating moving and idle odometry intervals.
+visibility:
+  interval_sec: 0.5  # Simulated seconds between exact RGB/depth/TF visibility evaluations.
+  pixel_stride: 2  # Rasterize every second pixel; smaller values improve small-object evidence at higher cost.
+  minimum_pixels: 25  # Minimum estimated full-resolution target surface pixels supported by measured depth.
+  minimum_visible_fraction: 0.1  # Minimum supported fraction of the target projected surface.
+  depth_tolerance_m: 0.05  # Maximum difference between target mesh depth and measured metric depth.
+methods:
+  - image_bearing
+  - graph_bearing
+  - graph_sample
+  - frontier
+  - graph_scene_graph
+  - frontier_scene_graph
+max_model_iterations: 0  # Per-task decision budget; 0 is unlimited; CLI --max-model-iterations overrides.
+repetitions: 3
+worlds:
+  office:
+    world: rmf_office.sdf
+    world_name: cosmos
+    start: [13.0, -7.0, 1.5, 0.0]
+    roi: [8.0, -12.0, 0.2, 19.0, -2.0, 2.2]
+    tasks:
+      exploration:
+        prompt: Explore the office, inspect previously unseen areas, and describe what you observed. Stay on this floor.
+        duration_sec: 300
+        targets: []
+        stages: []
+      search:
+        prompt: Find the red Coke can. Approach a safe viewing position and report visual evidence that you found it.
+        duration_sec: 180
+        targets:
+          - id: coke
+            label: Coke can
+            position: [17.766, -5.507, 1.2]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - Coke
+        stages: [coke]
+      sequential:
+        prompt: First find and inspect the cluster of trash bins, then fins and inspect a brown cabinet in the office. Report evidence for both in that order.
+        duration_sec: 300
+        targets:
+          - id: bins
+            label: cluster of trash bins
+            position: [13.189, -7.634, 0.5]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: all  # Require every listed instance to have depth-supported surface evidence.
+              instances:
+                - OpenRobotics/TrashBin
+                - OpenRobotics/TrashBin_2
+                - OpenRobotics/TrashBin_3
+          - id: cabinet
+            label: Brown cabinet
+            position: [21.6906, -3.4578, 1.2]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - MetalCabinetYellow
+        stages: [bins, cabinet]
+  hotel:
+    world: rmf_hotel.sdf
+    world_name: cosmos
+    start: [15.0, -30.0, 1.5, 0.0]
+    roi: [12.0, -40.5, 0.2, 29.0, -24.0, 2.2]
+    tasks:
+      exploration:
+        prompt: Explore the hotel ground-floor lobby and adjacent public areas, inspect unseen areas, and describe what you observed. Stay on this floor.
+        duration_sec: 300
+        targets: []
+        stages: []
+      search:
+        prompt: Find the digital kiosk in the hotel lobby. Approach a safe viewing position and report visual evidence that you found it.
+        duration_sec: 180
+        targets:
+          - id: kiosk
+            label: digital kiosk
+            position: [16.691, -26.681, 1.0]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - OpenRobotics/DigitalKiosk
+        stages: [kiosk]
+      sequential:
+        prompt: First inspect the digital kiosk, then inspect the pair of suitcases near reception, then find a vending machine. Report evidence for each in that order. Stay on the ground floor.
+        duration_sec: 300
+        targets:
+          - id: kiosk
+            label: digital kiosk
+            position: [16.691, -26.681, 1.0]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - OpenRobotics/DigitalKiosk
+          - id: suitcases
+            label: pair of suitcases
+            position: [20.668, -29.343, 0.45]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: all  # Require every listed instance to have depth-supported surface evidence.
+              instances:
+                - OpenRobotics/Suitcase2
+                - OpenRobotics/Suitcase1
+          - id: vending
+            label: vending machines
+            position: [25.918, -38.606, 1.0]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - OpenRobotics/VendingMachine
+                - OpenRobotics/VendingMachine_2
+        stages: [kiosk, suitcases, vending]
+  airport:
+    world: rmf_airport_terminal.sdf
+    world_name: cosmos
+    start: [65.0, -35.0, 1.5, 0.0]
+    roi: [50.0, -44.0, 0.2, 86.0, -18.0, 2.2]
+    tasks:
+      exploration:
+        prompt: Explore the nearby airport concourse and seating areas, inspect unseen areas, and describe what you observed. Stay on this floor.
+        duration_sec: 300
+        targets: []
+        stages: []
+      search:
+        prompt: Find the fountain near the southern airport seating area. Approach a safe viewing position and report visual evidence that you found it.
+        duration_sec: 180
+        targets:
+          - id: fountain
+            label: fountain near southern seating
+            position: [73.847, -34.708, 0.7]  # Approximate proximity-region center; not visual geometry.
+            radius: 3.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - Fountain
+        stages: [fountain]
+      sequential:
+        prompt: First inspect the fountain near the southern seating area, then find and inspect the electronics recycling station beside those seats. Report evidence for both in that order.
+        duration_sec: 300
+        targets:
+          - id: fountain
+            label: fountain near southern seating
+            position: [73.847, -34.708, 0.7]  # Approximate proximity-region center; not visual geometry.
+            radius: 3.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - Fountain
+          - id: recycling
+            label: electronics recycling station
+            position: [80.217, -40.438, 0.8]  # Approximate proximity-region center; not visual geometry.
+            radius: 2.0
+            visibility:
+              policy: any  # Require at least one listed instance to have depth-supported surface evidence.
+              instances:
+                - ElectronicsRecycling
+        stages: [fountain, recycling]

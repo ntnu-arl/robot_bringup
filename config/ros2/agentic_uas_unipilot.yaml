@@ -126,7 +126,7 @@ method:
 #
 # ACTIVE METHOD (replace this block to select one of the examples above)
 
-model: gpt-6.1-sol  # Vision-language model used to choose navigation targets.
+model: gpt-6-astra  # Vision-language model used to choose navigation targets.
 reasoning: "medium"  # Reasoning effort requested from the vision-language model.
 initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.
 world_frame: map  # World frame used for camera poses and target coordinates.
@@ -171,3 +171,5 @@ scene_graph:
   enabled: true  # Receive the optional scene graph without waiting for Hydra at startup.
   endpoint: tcp://127.0.0.1:8002  # Native C++ Spark-DSG publisher in the Jazzy container.
   poll_interval: 0.1  # Seconds between nonblocking polls for the newest graph.
+
+max_model_iterations: 0  # Decision calls per task, including prefetch/errors; 0 is unlimited.

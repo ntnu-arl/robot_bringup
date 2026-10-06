@@ -4,9 +4,11 @@
     <set_parameter name="use_sim_time" value="true"/>
 
     <!-- world parameters -->
+    <arg name="gz_extra_args" default=""/>
     <arg name="verbosity" default="4"/>
     <arg name="world_package" default="subt_cave_sim"/>
     <arg name="world" default="darpa_cave_01"/>
+    <arg name="world_file" default="$(find-pkg-share $(var world_package))/worlds/$(var world).sdf"/>
     <!-- Gazebo world name inside the SDF, independent of its filename. -->
     <arg name="world_name" default="map"/>
     <arg name="rviz" default="false"/>
@@ -28,7 +30,7 @@
     <!-- spawn world -->
     <set_env name="GZ_SIM_RESOURCE_PATH" value="$(find-pkg-share $(var world_package)):$(find-pkg-share $(var world_package))/models:$(find-pkg-share rmf_gz)/resources/"/>
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-        <arg name="gz_args" value="-r $(var headless_string) -v $(var verbosity) $(find-pkg-share $(var world_package))/worlds/$(var world).sdf"/>
+        <arg name="gz_args" value="-r $(var gz_extra_args) $(var headless_string) -v $(var verbosity) $(var world_file)"/>
     </include>
 
     <!-- spawn robot -->

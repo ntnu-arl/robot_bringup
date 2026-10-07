@@ -57,7 +57,7 @@ worlds:
                 - Coke
         stages: [coke]
       sequential:
-        prompt: First find and inspect the cluster of trash bins, then fins and inspect a brown cabinet in the office. Report evidence for both in that order.
+        prompt: First find and inspect the cluster of trash bins, then find and inspect a brown cabinet in the office. Report evidence for both in that order.
         duration_sec: 300
         targets:
           - id: bins
@@ -77,7 +77,7 @@ worlds:
             visibility:
               policy: any  # Require at least one listed instance to have depth-supported surface evidence.
               instances:
-                - MetalCabinetYellow
+                - OpenRobotics/MetalCabinetYellow
         stages: [bins, cabinet]
   hotel:
     world: rmf_hotel.sdf

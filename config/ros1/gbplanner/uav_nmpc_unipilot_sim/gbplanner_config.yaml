@@ -216,6 +216,7 @@ PlanningParams:
 
   traverse_length_max: 7.0 # Maximum length of the best path will be truncated to for actual traversal
   local_navigation_reaching_radius: 2.0
+  local_navigation_yaw_tolerance: 0.2 # Terminal heading error [rad] accepted by target reach.
   traverse_time_max: 500.0
   path_safety_enhance_enable: true  # Disable for ballast small, non corridor like environments
   augment_free_voxels_time: 3

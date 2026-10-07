@@ -173,3 +173,8 @@ scene_graph:
   poll_interval: 0.1  # Seconds between nonblocking polls for the newest graph.
 
 max_model_iterations: 0  # Decision calls per task, including prefetch/errors; 0 is unlimited.
+
+# Optional heading control applies to all six methods. Positive offsets turn left
+# about world +Z relative to the robot heading captured when inference starts.
+enable_goal_yaw: true  # Ask the model for yaw_offset; otherwise send the current robot heading.
+goal_yaw_tolerance: 0.2  # Radians allowed before a target is considered reached.

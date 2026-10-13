@@ -127,6 +127,10 @@ topics:
     direction: ros2_to_ros1
 
 services_2_to_1:
+  - service: /pci_general/initialization_yaw_scan
+    type: std_srvs/Trigger
+  - service: /pci_general/initialization_yaw_scan_status
+    type: std_srvs/Trigger
   - service: /gbplanner/switch_operation_mode
     type: std_srvs/SetBool
   - service: /planner_control_interface/std_srvs/stop

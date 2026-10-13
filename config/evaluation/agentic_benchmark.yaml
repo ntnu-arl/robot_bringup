@@ -8,6 +8,8 @@ runtime:
   takeoff_height: 2.0  # Must match NMPC ref.zref; checked by the evaluation harness.
   takeoff_tolerance: 0.3  # Maximum altitude error before starting the task.
   start_position_tolerance: 2.0  # Maximum horizontal drift from the intended spawn.
+  initialization_yaw_scan: true  # Perform a full yaw scan after takeoff, before starting the task.
+  initialization_yaw_rate: 0.35  # Positive yaw reference rate in radians per simulated second.
   settle_time_sec: 2.0  # Require stable initialization for this many wall seconds.
   require_scene_graph: true  # Warm up the same perception stack for all six methods.
   jpeg_quality: 85  # Quality for the full-rate RGB recording stream.
@@ -36,7 +38,10 @@ worlds:
     world: rmf_office.sdf
     world_name: cosmos
     start: [13.0, -7.0, 1.5, 0.0]
-    roi: [8.0, -12.0, 0.2, 19.0, -2.0, 2.2]
+    roi: [8.0, -12.0, 0.2, 19.0, -2.0, 2.2]  # Evaluation voxel-counting region; does not constrain navigation.
+    gbplanner_bounds:  # Global planning box in map-frame metres, independent of roi.
+      min: [7.0, -13.0, 0.0]  # Minimum XYZ permitted by GBPlanner.
+      max: [24.0, 0.0, 2.5]  # Maximum XYZ; includes the spawn and task areas on this floor.
     tasks:
       exploration:
         prompt: Explore the office, inspect previously unseen areas, and describe what you observed. Stay on this floor.
@@ -82,8 +87,11 @@ worlds:
   hotel:
     world: rmf_hotel.sdf
     world_name: cosmos
-    start: [15.0, -30.0, 1.5, 0.0]
-    roi: [12.0, -40.5, 0.2, 29.0, -24.0, 2.2]
+    start: [19.0, -21.5, 0.2, 3.141592653589793]  # XYZ and yaw in radians; face 180 degrees from the previous heading.
+    roi: [12.0, -40.5, 0.2, 29.0, -24.0, 2.2]  # Evaluation voxel-counting region; does not constrain navigation.
+    gbplanner_bounds:  # Global planning box in map-frame metres, independent of roi.
+      min: [10.0, -42.0, 0.0]  # Minimum XYZ permitted by GBPlanner.
+      max: [31.0, -18.0, 2.0]  # Maximum XYZ; includes the spawn and task areas on this floor.
     tasks:
       exploration:
         prompt: Explore the hotel ground-floor lobby and adjacent public areas, inspect unseen areas, and describe what you observed. Stay on this floor.
@@ -91,18 +99,18 @@ worlds:
         targets: []
         stages: []
       search:
-        prompt: Find the digital kiosk in the hotel lobby. Approach a safe viewing position and report visual evidence that you found it.
+        prompt: Find a pair of soda dispensers. Approach a safe viewing position where both can be identified clearly. Report the image IDs and visible identifying features supporting each identification. If the view is ambiguous, approach for verification before declaring completion.
         duration_sec: 180
         targets:
-          - id: kiosk
-            label: digital kiosk
-            position: [16.691, -26.681, 1.0]  # Approximate proximity-region center; not visual geometry.
+          - id: vending_machine
+            label: vending machine  
+            position: [25.93, -30.03, 1.0]  # Approximate proximity-region center; not visual geometry.
             radius: 2.0
             visibility:
               policy: any  # Require at least one listed instance to have depth-supported surface evidence.
               instances:
-                - OpenRobotics/DigitalKiosk
-        stages: [kiosk]
+                - OpenRobotics/VendingMachine
+        stages: [vending_machine]
       sequential:
         prompt: First inspect the digital kiosk, then inspect the pair of suitcases near reception, then find a vending machine. Report evidence for each in that order. Stay on the ground floor.
         duration_sec: 300
@@ -138,7 +146,10 @@ worlds:
     world: rmf_airport_terminal.sdf
     world_name: cosmos
     start: [65.0, -35.0, 1.5, 0.0]
-    roi: [50.0, -44.0, 0.2, 86.0, -18.0, 2.2]
+    roi: [50.0, -44.0, 0.2, 86.0, -18.0, 2.2]  # Evaluation voxel-counting region; does not constrain navigation.
+    gbplanner_bounds:  # Global planning box in map-frame metres, independent of roi.
+      min: [48.0, -46.0, 0.0]  # Minimum XYZ permitted by GBPlanner.
+      max: [88.0, -16.0, 2.5]  # Maximum XYZ; includes the spawn and task areas on this floor.
     tasks:
       exploration:
         prompt: Explore the nearby airport concourse and seating areas, inspect unseen areas, and describe what you observed. Stay on this floor.

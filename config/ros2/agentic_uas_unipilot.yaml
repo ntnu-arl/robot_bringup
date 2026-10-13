@@ -130,6 +130,10 @@ model: gpt-6-astra  # Vision-language model used to choose navigation targets.
 reasoning: "medium"  # Reasoning effort requested from the vision-language model.
 initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.
 world_frame: map  # World frame used for camera poses and target coordinates.
+goal_bounds:  # Optional world-frame target limits; benchmark copies set these from gbplanner_bounds.
+  enabled: false  # Enable to reject every out-of-box waypoint and filter candidate observations.
+  min: [7.0, -13.0, 0.0]  # Minimum XYZ in world_frame; match the planner global bounds.
+  max: [24.0, 0.0, 2.5]  # Maximum XYZ in world_frame; example for the office benchmark.
 goal_tolerance: 2.0  # Distance in metres that immediately counts as reaching a target.
 near_goal_tolerance: 3.0  # Distance in metres within which the near-goal dwell timer runs.
 near_goal_stationary_timeout: 3.0  # Seconds inside the near-goal radius before accepting arrival, even with small motion.

@@ -1,0 +1,15 @@
+# Spawn presets for make launch-sim, independent of benchmark configuration.
+# Keys are exact world filenames; values are [x, y, z, yaw].
+# XYZ use world-frame metres; yaw uses radians. SPAWN overrides these values.
+physics_step_sec: 0.001  # UAV motor/controller integration step; coarse world defaults can destabilize flight.
+
+gz_sim_worlds:
+  rmf_office.sdf: [13.0, -7.0, 1.5, 0.0]  # Office starting pose.
+  rmf_hotel.sdf: [19.0, -21.5, 0.2, 3.141592653589793]  # Hotel starting pose, facing 180 degrees.
+  rmf_airport_terminal.sdf: [65.0, -35.0, 1.5, 0.0]  # Airport starting pose.
+
+subt_cave_sim:
+  darpa_cave_01.sdf: [40.0, 5.0, 0.5, 0.0]  # Standard SubT cave starting pose.
+
+# HM3D uses spawn.position and spawn.yaw in each converted scene's JSON metadata
+# under generated/hm3d/worlds/ (or HM3D_ASSETS/worlds/).

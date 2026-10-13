@@ -7,6 +7,10 @@
 # Unlisted parameters use Spark Config defaults. The method-specific prompt is
 # chosen automatically; remove an old prompt_file override when changing methods.
 # All methods ultimately send a global 3D waypoint to GBPlanner target reach.
+# Methods 3-6 additionally accept a bearing and distance when allow_bearing is true.
+# Set allow_bearing: false to recover the original candidate-only experiment.
+# Bearings use Current optical axes (+x right, +y down, +z forward); they are not
+# world vectors or references to keyviews. Candidate projection stays enabled.
 # Submit a task and call /agentic_uas/start (or Start Agent in RViz) to begin;
 # robot initialization remains manual. SetTask alone does not start an idle agent.
 # keyframing settings apply to methods 3-6; methods 1-2 use only Current.
@@ -39,22 +43,28 @@
 #
 # METHOD 3: graph_sample
 # Input: sparse global graph, posed Current image and posed keyviews, with sample
-# IDs projected into each image. Output: one supplied navigation candidate_id.
+# IDs projected into each image. Output: a candidate_id, or bearing/distance if enabled.
 # graph_min_spacing controls sparsification; max_candidates limits offered graph
 # samples. Imaginary local samples bootstrap decisions when graph samples are absent.
 # Example:
 # method:
 #   type: graph_sample  # Select a sparse graph sample using posed observations.
+#   allow_bearing: true  # Choose a candidate ID OR a continuous optical bearing and distance.
+#   min_distance: 1.0  # Minimum distance from the captured camera origin in metres.
+#   max_distance: 30.0  # Maximum bearing distance in metres; world bounds also apply.
 #
 # METHOD 4: frontier
 # Input: GBPlanner frontiers, posed Current image and posed keyviews, with projected
-# candidate IDs. Output: one supplied frontier candidate_id. Frontiers are NOT
+# candidate IDs. Output: a frontier ID, or bearing/distance if enabled. Frontiers are NOT
 # sparsified or capped by max_candidates, but distance, freshness and visit checks
 # still apply. If no eligible frontiers remain, use sparse graph samples, then
 # imaginary samples if neither real source supplies an eligible candidate.
 # Example:
 # method:
 #   type: frontier  # Select a frontier or an explicitly identified fallback candidate.
+#   allow_bearing: true  # Choose a candidate ID OR a continuous optical bearing and distance.
+#   min_distance: 1.0  # Minimum distance from the captured camera origin in metres.
+#   max_distance: 30.0  # Maximum bearing distance in metres; world bounds also apply.
 #   frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified frontier PoseArray feed.
 #   max_age: 30.0  # Seconds before a frontier snapshot expires and fallback selection begins.
 #   min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; exceed arrival radii.
@@ -62,13 +72,16 @@
 # METHOD 5: graph_scene_graph
 # Input/output: method 3 plus Hydra's complete semantic object layer. Each object
 # has a readable label, centroid, bounding box and native graph adjacency; robot
-# trajectory nodes are omitted. Output remains a navigation sample candidate_id,
+# trajectory nodes are omitted. Output is a navigation sample ID or enabled bearing/distance,
 # NOT an object ID. The reply also contains scene_graph_description.
 # Requires top-level scene_graph.enabled: true and the scene-graph launch profile:
 # make launch DOCKER_COMPOSE_FILE=docker-compose.uav_nmpc_unipilot_scene_graph_sim.yml
 # Example:
 # method:
 #   type: graph_scene_graph  # Sparse navigation samples plus semantic scene evidence.
+#   allow_bearing: true  # Choose a candidate ID OR a continuous optical bearing and distance.
+#   min_distance: 1.0  # Minimum distance from the captured camera origin in metres.
+#   max_distance: 30.0  # Maximum bearing distance in metres; world bounds also apply.
 #   scene_graph:
 #     labelspace_file: /scene_graph/label_spaces/ade20k_full_label_space.yaml  # Shared Hydra source file.
 #     object_layer: 2  # Complete static object layer, excluding partitioned robot poses.
@@ -88,13 +101,16 @@
 #
 # METHOD 6: frontier_scene_graph
 # Input/output: method 4 plus the same semantic object evidence as method 5.
-# Output remains a frontier candidate_id, or a supplied graph/imaginary fallback
+# Output is a frontier ID, an enabled bearing/distance, or a graph/imaginary fallback
 # ID when no eligible frontiers exist. Frontiers remain unsparsified. The reply
 # also contains scene_graph_description. Requires the same receiver and launch
 # profile as method 5. Object IDs cannot be sent as navigation targets.
 # Example:
 method:
   type: frontier_scene_graph  # Frontier navigation guided by semantic scene evidence.
+  allow_bearing: true  # Choose a candidate ID OR a continuous optical bearing and distance.
+  min_distance: 1.0  # Minimum distance from the captured camera origin in metres.
+  max_distance: 30.0  # Maximum bearing distance in metres; world bounds also apply.
   frontier_topic: /agentic_uas/frontier_candidates  # Unsparsified frontier PoseArray feed.
   max_age: 30.0  # Seconds before a frontier snapshot expires and fallback selection begins.
   min_goal_distance: 4.0  # Minimum robot-to-frontier distance in metres; exceed arrival radii.
@@ -130,10 +146,10 @@ model: gpt-6-astra  # Vision-language model used to choose navigation targets.
 reasoning: "medium"  # Reasoning effort requested from the vision-language model.
 initial_task: ""  # Task loaded at startup; an empty value waits for a task service call.
 world_frame: map  # World frame used for camera poses and target coordinates.
-goal_bounds:  # Optional world-frame target limits; benchmark copies set these from gbplanner_bounds.
-  enabled: false  # Enable to reject every out-of-box waypoint and filter candidate observations.
-  min: [7.0, -13.0, 0.0]  # Minimum XYZ in world_frame; match the planner global bounds.
-  max: [24.0, 0.0, 2.5]  # Maximum XYZ in world_frame; example for the office benchmark.
+goal_bounds:  # Match Unipilot GBPlanner Global bounds; benchmark trials replace them per environment.
+  enabled: true  # Reject every out-of-box waypoint and filter candidate observations.
+  min: [-2000.0, -3000.0, -100.0]  # Minimum XYZ from the Unipilot planner Global min_val.
+  max: [3000.0, 3000.0, 200.0]  # Maximum XYZ from the Unipilot planner Global max_val.
 goal_tolerance: 2.0  # Distance in metres that immediately counts as reaching a target.
 near_goal_tolerance: 3.0  # Distance in metres within which the near-goal dwell timer runs.
 near_goal_stationary_timeout: 3.0  # Seconds inside the near-goal radius before accepting arrival, even with small motion.
@@ -162,13 +178,45 @@ image_capture_interval: 0.5  # Minimum seconds between successfully captured cam
 # For task-relevance selection instead:
 # Policy and settings used to retain a bounded set of camera observations.
 keyframing:
-  type: clip  # Keyframe selection policy: geometric movement thresholds or CLIP task similarity.
+  type: task_clip  # Parse visual object concepts, score CLIP relevance, then filter coverage.
   max_keyframes: 4  # Maximum number of retained keyframes, in addition to the current image.
-  min_distance: 2.0  # Minimum camera-position separation in metres between retained CLIP keyframes.
+  min_distance: 2.0  # Treat views as equivalent only when translation AND rotation are below thresholds.
+  min_rotation: 0.5235987756  # Thirty-degree rotation threshold for equivalent viewpoints.
+  pool_size: 30  # Bound the candidate bank while retaining selected coverage representatives.
+  min_score: -1.0  # Lowest permitted CLIP cosine score; -1 disables relevance thresholding.
   model: ViT-B-32  # OpenCLIP architecture used to score task relevance.
-  pretrained: laion2b_s34b_b79k  # Pretrained OpenCLIP weights used to encode images and task text.
+  pretrained: laion2b_s34b_b79k  # Shared OpenCLIP weights for images and extracted object labels.
   device: cuda  # PyTorch device used for CLIP inference, such as cuda or cpu.
   cpu_threads: 2  # Number of PyTorch CPU threads when the CLIP device is cpu.
+  parser:
+    model: gpt-4o-mini  # Text-only model called once for each new task.
+    api_key_env: OPENAI_API_KEY  # Environment variable containing the parser API credential.
+    base_url: ""  # Empty uses the default OpenAI API endpoint.
+    timeout: 30.0  # Maximum seconds for a concept extraction request.
+    max_retries: 0  # API retries before reporting a task preparation error.
+    max_concepts: 8  # Maximum number of distinct relevant object concepts.
+    prompt_file: agentic_uas_task_concepts_prompt.txt  # Prompt resolved beside this configuration.
+  scorer:
+    type: max_cosine  # Use the best object-label cosine; uniform_pooling uses the mean cosine.
+  coverage:
+    type: spatial_quota  # Limit selected views per camera-position cell, independent of Hydra.
+    cell_size_m: 3.0  # World-space cell width in metres.
+    max_views_per_cell: 1  # Maximum retained keyviews in each spatial cell.
+  # To use depth coverage, replace the entire coverage block with:
+  # coverage:
+  #   type: visible_surface_voxels  # Require newly visible measured surfaces; no scene graph needed.
+  #   voxel_size_m: 0.5  # World-space grid resolution for visible surface points.
+  #   pixel_stride: 16  # Sample every sixteenth pixel along each depth-image axis.
+  #   min_depth_m: 0.1  # Ignore depth measurements below this distance.
+  #   max_depth_m: 10.0  # Ignore depth measurements above this distance.
+  #   min_visible_voxels: 20  # Minimum valid surface voxels to admit a view.
+  #   min_new_fraction: 0.2  # Fraction of surfaces not already covered by selected views.
+  depth:
+    image_topic: /rmf_unipilot/cam/depth  # Depth source for optional surface coverage.
+    camera_info_topic: /rmf_unipilot/cam/camera_info  # Depth calibration for TF-based RGB registration.
+    sync_queue_size: 16  # Bound exact RGB-depth synchronization queues.
+# Select type: clip for legacy whole-task relevance, or type: geometric with its
+# parameters above. task_clip applies only to methods 3-6, like other keyview policies.
 
 # Native Hydra graph used by methods 5 and 6; other methods do not feed it to the model.
 scene_graph:

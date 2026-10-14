@@ -23,17 +23,19 @@ air_sonar:
     #   waveform_file: /workspace/src/picaso-drone/sweeps/my_sweep.csv  # Custom CSV in the mounted repo.
     #   waveform_file: /workspace/waveforms/my_sweep.csv  # Host: workspaces/ws_air_sonar/waveforms/my_sweep.csv.
     #   waveform_file: ""  # Use the bundled default.
-    # Custom CSV files must exist: 1..1024 integer DAC samples in 0..4095; padded with 2048.
+    # Custom CSVs must contain integer DAC samples in 0..4095: use the first 1024,
+    # matching picaso_record.py; shorter tables are padded with 2048. Empty CSVs are rejected.
     waveform_file: sweeps/sweep_512_taper30.csv
     frame_id: air_sonar_link
     # Seconds between captures; zero acquires continuously.
     capture_period: 0.0
-    serial_timeout: 1.0
-    capture_timeout: 10.0
+    serial_timeout: 1.0  # Read polling interval; a quiet poll does not discard a capture.
+    capture_timeout: 10.0  # Total capture deadline; must be >= serial_timeout.
     reconnect_period: 2.0
     upload_settle_time: 0.3
-    # Optional paired V4L2 camera; -1 disables it.
+    # Optional paired webcam; -1 disables it. Backend follows the host platform.
     camera_index: -1
+    camera_warmup_frames: 10  # Discard frames after opening, as in picaso_record.py.
     camera_frame_id: air_sonar_camera_optical_frame
     camera_jpeg_quality: 90
     camera_max_age: 1.0  # Maximum age in seconds of an image paired with a capture.

@@ -42,6 +42,17 @@ topics:
 
     # ros2 to ros1
 
+  # --- PICASO Air Sonar ---
+  - topic: /air_sonar/capture
+    type: picaso_msgs/msg/Capture
+    queue_size: 2
+    direction: ros2_to_ros1
+
+  - topic: /air_sonar/image/compressed
+    type: sensor_msgs/msg/CompressedImage
+    queue_size: 2
+    direction: ros2_to_ros1
+
   - topic: /mavros/setpoint_raw/local
     type: mavros_msgs/msg/PositionTarget
     queue_size: 10

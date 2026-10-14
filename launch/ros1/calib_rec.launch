@@ -1,0 +1,25 @@
+<launch>
+    <!-- Kalibr needs raw (not compressed) images - decompress all 3 cameras for the duration of the
+         calibration recording only. Not part of the normal bag_rec.launch recording path. -->
+    <node pkg="image_transport" type="republish" name="republish_calib_front" output="screen" args="compressed">
+        <remap from="in" to="/cam_front/image_raw" />
+        <remap from="out" to="/cam_front/calib/image_raw" />
+    </node>
+    <node pkg="image_transport" type="republish" name="republish_calib_left" output="screen" args="compressed">
+        <remap from="in" to="/cam_left/image_raw" />
+        <remap from="out" to="/cam_left/calib/image_raw" />
+    </node>
+    <node pkg="image_transport" type="republish" name="republish_calib_right" output="screen" args="compressed">
+        <remap from="in" to="/cam_right/image_raw" />
+        <remap from="out" to="/cam_right/calib/image_raw" />
+    </node>
+
+    <arg name="record_path" default="$(env HOME)/kalibr_data" />
+
+    <node pkg="rosbag" type="record" name="kalibr_recorder" output="screen" args="-O $(arg record_path)/quail_cam_imu_calib.bag
+      /cam_front/calib/image_raw
+      /cam_left/calib/image_raw
+      /cam_right/calib/image_raw
+      /vectornav_driver_node/imu/data
+    " />
+</launch>

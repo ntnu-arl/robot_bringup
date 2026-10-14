@@ -15,6 +15,9 @@
       /radar/cloud
       /radar/ros_time_now
 
+      /air_sonar/capture
+      /air_sonar/image/compressed
+
       /vectornav_driver_node/filter/data
       /vectornav_driver_node/filter/mag
       /vectornav_driver_node/imu/mag

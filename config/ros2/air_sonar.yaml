@@ -1,0 +1,39 @@
+air_sonar:
+  ros__parameters:
+    # Stable USB CDC path created by the host 99-picaso.rules file.
+    port: /dev/picaso
+    # Optional USB serial identifier for discovery when port is empty.
+    serial_number: ""
+    baud_rate: 115200
+    # Firmware capture mode and number of receive events per capture.
+    mode: A
+    events: 20
+    # Capture window in metres; >0 overrides events, rounded up and capped at 32 events (~10.12 m).
+    # For example, 5.0 m selects 16 events. Zero keeps the events setting above.
+    max_range: 0.0
+    # Successful captures before acquisition stops; zero keeps acquiring until stopped.
+    shots: 0
+    # Measurement label saved in capture messages and exported CSV; does not name the ROS bag.
+    tag: ""
+    # Active-mode DAC CSV: absolute/container-relative path or a path in the driver package share.
+    # This bundled sweep is the measurement-plan default; empty selects the same sweep.
+    # Ignored in passive mode (P).
+    # Examples (choose one value, not multiple waveform_file entries):
+    #   waveform_file: sweeps/sweep_512_taper30.csv  # Bundled sweep, resolved in package share.
+    #   waveform_file: /workspace/src/picaso-drone/sweeps/my_sweep.csv  # Custom CSV in the mounted repo.
+    #   waveform_file: /workspace/waveforms/my_sweep.csv  # Host: workspaces/ws_air_sonar/waveforms/my_sweep.csv.
+    #   waveform_file: ""  # Use the bundled default.
+    # Custom CSV files must exist: 1..1024 integer DAC samples in 0..4095; padded with 2048.
+    waveform_file: sweeps/sweep_512_taper30.csv
+    frame_id: air_sonar_link
+    # Seconds between captures; zero acquires continuously.
+    capture_period: 0.0
+    serial_timeout: 1.0
+    capture_timeout: 10.0
+    reconnect_period: 2.0
+    upload_settle_time: 0.3
+    # Optional paired V4L2 camera; -1 disables it.
+    camera_index: -1
+    camera_frame_id: air_sonar_camera_optical_frame
+    camera_jpeg_quality: 90
+    camera_max_age: 1.0  # Maximum age in seconds of an image paired with a capture.
